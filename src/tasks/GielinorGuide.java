@@ -17,6 +17,7 @@ public class GielinorGuide extends TaskNode {
 
     @Override
     public int execute() {
+//        TODO add some playing around with the camera and zoom
         log("Starting Gielinor Guide");
         NPCHelper gielinorGuide = new NPCHelper(3308);
         gielinorGuide.talkTo();
