@@ -3,8 +3,8 @@ package utils;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.wrappers.interactive.NPC;
-import sun.rmi.runtime.Log;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NPCHelper {
@@ -32,18 +32,30 @@ public class NPCHelper {
     }
 
     public void navigateText() {
-        String npcText = new WidgetHelper(new int[]{4}, 231).getWidgetText();
-        SleepHelper.sleepRange(timeToRead(npcText), 200);
-        goToNextText();
+        while (new WidgetHelper(new int[]{4}, 231).valid() | new WidgetHelper(new int[]{1}, 219).valid()) {
+            List<String> multiChoice = detectTextChoices();
+            if (multiChoice == null) {
+                String npcText = new WidgetHelper(new int[]{4}, 231).getWidgetText();
+                SleepHelper.sleepRange(timeToRead(npcText), 200);
+                goToNextText();
+            } else {
+                LogHelper.logMethod(multiChoice);
+                LogHelper.logMethod("multi choice!");
+            }
+        }
     }
-    private void goToNextText(){
+
+    private void goToNextText() {
         Keyboard.type(" ", false);
     }
-    private String[] detectTextChoices(){
+
+    private List<String> detectTextChoices() {
         WidgetHelper textWidget = new WidgetHelper(new int[]{1}, 219);
-        if (textWidget.valid()){
+        if (textWidget.valid()) {
             LogHelper.logMethod(textWidget.allChildText());
+            return textWidget.allChildText();
         }
+        return null;
     }
 
     private int timeToRead(String text) {
