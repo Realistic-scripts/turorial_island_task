@@ -44,14 +44,17 @@ public class WidgetHelper extends MethodContext {
 
     public List<String> allChildText() {
         List<String> textArray = new ArrayList<>();
-        List<Item> grandChildren = childWidget.getChildItems();
-        for (Object grandChild : grandChildren) {
-            textArray.add(grandChild.toString());
+        WidgetChild[] grandChildren = childWidget.getChildren();
+        for (WidgetChild grandChild : grandChildren) {
+            textArray.add(grandChild.getText());
         }
         return textArray;
     }
 
     public boolean widgetContainsText(String text) {
         return getWidgetText().contains(text);
+    }
+    public WidgetChild child(){
+        return childWidget;
     }
 }

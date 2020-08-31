@@ -4,6 +4,7 @@ import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.impl.TaskScript;
+import tasks.GGToFishing;
 import tasks.GielinorGuide;
 import tasks.PickAppearance;
 import tasks.PickName;
@@ -17,7 +18,7 @@ public class Main extends TaskScript {
         log("starting Tutorial Island");
         getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
         getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
-        addNodes(new PickName(), new PickAppearance(), new GielinorGuide());
+        addNodes(new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing());
         sleep(10000);
     }
 }
