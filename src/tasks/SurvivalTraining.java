@@ -5,8 +5,10 @@ import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.script.TaskNode;
-import state.State;
+import state.ScriptState;
 import state.TaskState;
+import utils.HintArrowHelper;
+import utils.LogHelper;
 import utils.NPCHelper;
 import utils.SleepHelper;
 
@@ -48,7 +50,8 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrow.getPointed() != null & HintArrow.getPointed().getName().contains("Fishing spot");
+            LogHelper.log(HintArrow.exists());
+            return HintArrowHelper.getName().contains("Fishing spot");
         }
 
         @Override
@@ -114,15 +117,15 @@ enum SurvivalTrainingState implements TaskState {
 }
 
 public class SurvivalTraining extends TaskNode {
-    State state;
+    ScriptState state;
 
-    public SurvivalTraining(State state) {
+    public SurvivalTraining(ScriptState state) {
         this.state = state;
     }
 
     @Override
     public boolean accept() {
-        return this.state.equals(State.SURVIVAL_TRAINING);
+        return this.state.get() == ScriptState.States.SURVIVAL_TRAINING;
     }
 
     @Override
