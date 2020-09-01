@@ -29,10 +29,11 @@ public class NPCHelper {
         LogHelper.logMethod("Interacting with NPC");
     }
 
-    public void talkTo() {
+    public boolean talkTo() {
         LogHelper.logMethod("talking to NPC");
         interact();
         navigateText();
+        return true;
     }
 
     public void navigateText() {

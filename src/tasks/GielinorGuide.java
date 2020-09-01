@@ -14,6 +14,7 @@ public class GielinorGuide extends TaskNode {
         log("Checking if Gielinor Guide is valid");
         WidgetHelper widget = new WidgetHelper(new int[]{1, 0}, 263);
         // TODO change this to work with both widget dialogs.
+        // maybe use org.dreambot.api.methods.hint.HintArrow?
         return widget.widgetContainsText("Before you begin, have a read through");
     }
 
