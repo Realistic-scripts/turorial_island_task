@@ -2,7 +2,6 @@ package tasks;
 
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
-import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.script.TaskNode;
 import utils.NPCHelper;
 import utils.WalkingHelper;

@@ -25,3 +25,11 @@ public class Main extends TaskScript {
     }
 }
 
+// org.dreambot.api.script.event.impl.ExperienceEvent
+// org.dreambot.api.methods.walking.web.node.impl.dynamic.DynamicTeleport
+// org.dreambot.api.utilities.InventoryMonitor
+// org.dreambot.api.utilities.Logger
+// org.dreambot.api.methods.map.Map
+// org.dreambot.api.wrappers.widgets.Menu
+//
+

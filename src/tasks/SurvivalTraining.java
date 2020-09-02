@@ -1,5 +1,6 @@
 package tasks;
 
+import org.dreambot.api.input.event.impl.mouse.impl.click.ClickMode;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.input.Keyboard;
@@ -144,20 +145,16 @@ enum SurvivalTrainingState implements TaskState {
             LogHelper.log("Making a fire");
             Tabs.openWithMouse(Tab.INVENTORY);
             Tile tile = Me.cleanTile();
+//            ClickMode.LEFT_CLICK;
             Walking.walkExact(tile);
             Item log = Inventory.get(2511);
             log.useOn(590);
-            int logCount = 0;
-//            while(logCount< 1000){
-//                LogHelper.log(Me.playerObjet().getWalkAnimation());
-//                SleepHelper.sleep(100);
-//                logCount++;
-//            }
             // TODO this needs to wait longer to check to see if it is done walking and making the fire
-            SleepHelper.sleep(1000); // HACK Find a better way. Maybe add a wrapper that checks more then one walk animation in a row?
+            SleepHelper.sleep(2000); // HACK Find a better way. Maybe add a wrapper that checks more then one walk animation in a row?
             SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808 &
                     Me.playerObjet().getAnimation() == -1, 45000);
             LogHelper.log("done making fire");
+
             return true;
         }
 
