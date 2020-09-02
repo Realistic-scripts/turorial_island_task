@@ -2,15 +2,16 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.hint.HintArrow;
+import org.dreambot.api.methods.input.Keyboard;
+import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
+import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
-import utils.HintArrowHelper;
-import utils.LogHelper;
-import utils.NPCHelper;
-import utils.SleepHelper;
+import utils.*;
 
 // TODO add storing state in file
 enum SurvivalTrainingState implements TaskState {
@@ -42,7 +43,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean run() {
-            HintArrow.getPointed().interact();
+            HintArrowHelper.interact("Fishing Spot");
             SleepHelper.sleepUntil(() -> Inventory.contains(2514), 5000);
             iteration++;
             return true;
@@ -100,12 +101,74 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrow.getPointed() != null & HintArrow.getPointed().getName().contains("Survival Expert");
+            return HintArrowHelper.getName().contains("Survival Expert");
         }
 
         @Override
         public TaskState previousState() {
             return CHECK_SKILLS;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return CHOP_TREE;
+        }
+    },
+    CHOP_TREE {
+        @Override
+        public Boolean run() {
+            HintArrowHelper.interact("Tree");
+            SleepHelper.sleepUntil(() -> Inventory.contains(2511), 15000);
+            Keyboard.type(" ", false);
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return HintArrowHelper.getName().contains("Tree");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return MAKE_FIRE;
+        }
+    },
+    MAKE_FIRE {
+        @Override
+        public Boolean run() {
+            LogHelper.log("Making a fire");
+            Tabs.openWithMouse(Tab.INVENTORY);
+            Tile tile = Me.cleanTile();
+            Walking.walkExact(tile);
+            Item log = Inventory.get(2511);
+            log.useOn(590);
+            int logCount = 0;
+//            while(logCount< 1000){
+//                LogHelper.log(Me.playerObjet().getWalkAnimation());
+//                SleepHelper.sleep(100);
+//                logCount++;
+//            }
+            // TODO this needs to wait longer to check to see if it is done walking and making the fire
+            SleepHelper.sleep(1000); // HACK Find a better way. Maybe add a wrapper that checks more then one walk animation in a row?
+            SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808 &
+                    Me.playerObjet().getAnimation() == -1, 45000);
+            LogHelper.log("done making fire");
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return Inventory.containsAll(2511, 590);
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
         }
 
         @Override

@@ -2,6 +2,7 @@ package utils;
 
 import org.dreambot.api.methods.MethodContext;
 import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.wrappers.interactive.Player;
 
 public class Me extends MethodContext {
@@ -21,11 +22,16 @@ public class Me extends MethodContext {
     }
 
     public static boolean interactingWithNpc(int npcId) {
-        try{
+        try {
             return playerObjet().getCharacterInteractingWithMe().getID() == npcId;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
 
+    }
+
+    public static Tile cleanTile() {
+        TileHelper tileHelper = new TileHelper(playerObjet().getTile());
+        return tileHelper.getCleanTileNear();
     }
 }
