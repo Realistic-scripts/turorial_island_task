@@ -21,9 +21,11 @@ public class HintArrowHelper {
     }
 
     private static GameObject getObject() {
+        // TODO simplify this. Use HintArray.getPointed() and getType();
         if (!HintArrow.exists()) {
             return null;
         }
+
         Tile tile = HintArrow.getTile();
         if (tile == null) {
             return null;

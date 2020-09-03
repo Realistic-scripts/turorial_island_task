@@ -21,7 +21,8 @@ public class ScriptState {
         PICK_APPEARANCE,
         GG,
         GG_TO_FISHING,
-        SURVIVAL_TRAINING;
+        SURVIVAL_TRAINING,
+        MASTER_CHEF;
     }
 
 }

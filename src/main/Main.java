@@ -11,7 +11,7 @@ import tasks.*;
         category = Category.MISC)
 
 public class Main extends TaskScript {
-    private ScriptState state = new ScriptState(ScriptState.States.START);
+    private ScriptState state = new ScriptState(ScriptState.States.MASTER_CHEF);
     @Override
     public void onStart() {
 
@@ -19,7 +19,7 @@ public class Main extends TaskScript {
         getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
         getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(new LoggedIn(state),
-                new SurvivalTraining(state));
+                new SurvivalTraining(state), new MasterChef(state));
 //        new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
         sleep(10000);
     }

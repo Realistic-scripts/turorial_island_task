@@ -273,7 +273,7 @@ public class SurvivalTraining extends TaskNode {
     @Override
     public int execute() {
         log("Starting survival training");
-        TaskState state = SurvivalTrainingState.WALK_TO_CHEF;
+        TaskState state = SurvivalTrainingState.FISHING_NET;
         boolean done = false;
         while (!done) {
             if (state.verify()) {
@@ -282,6 +282,7 @@ public class SurvivalTraining extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
+        this.state.set(ScriptState.States.MASTER_CHEF);
         return 1;
     }
 }
