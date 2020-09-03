@@ -1,9 +1,9 @@
 package tasks;
 
-import org.dreambot.api.input.event.impl.mouse.impl.click.ClickMode;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.input.Keyboard;
+import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
@@ -19,6 +19,7 @@ enum SurvivalTrainingState implements TaskState {
     FISHING_NET {
         @Override
         public Boolean run() {
+            LogHelper.log("running fishing net");
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             return true;
@@ -26,6 +27,8 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
+            // TODO check if there is a net in the inv
+            LogHelper.log("Checking fishing net");
             return true;
         }
 
@@ -44,7 +47,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean run() {
-            HintArrowHelper.interact("Fishing Spot");
+            HintArrowHelper.interact("running Fishing Spot");
             SleepHelper.sleepUntil(() -> Inventory.contains(2514), 5000);
             iteration++;
             return true;
@@ -52,6 +55,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
+            LogHelper.log("Checking fishing spot");
             LogHelper.log(HintArrow.exists());
             return HintArrowHelper.getName().contains("Fishing spot");
         }
@@ -142,6 +146,7 @@ enum SurvivalTrainingState implements TaskState {
     MAKE_FIRE {
         @Override
         public Boolean run() {
+//
             LogHelper.log("Making a fire");
             Tabs.openWithMouse(Tab.INVENTORY);
             Tile tile = Me.cleanTile();
@@ -160,7 +165,34 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return Inventory.containsAll(2511, 590);
+            LogHelper.log("Checking make fire");
+            return Inventory.containsAll(2511, 590) & GameObjects.closest(26185) == null;
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return COOK_SHRIMP;
+        }
+    },
+    COOK_SHRIMP {
+        @Override
+        public Boolean run() {
+            LogHelper.log("Running cook shrimp");
+            Item shrimp = Inventory.get(2514);
+            // TODO fix this to use on fire.
+            shrimp.useOn(590);
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            LogHelper.log("Checking cook shrimp");
+            return Inventory.contains(2514);
         }
 
         @Override

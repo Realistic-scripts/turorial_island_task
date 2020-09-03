@@ -1,12 +1,7 @@
 package tasks;
 
 import org.dreambot.api.Client;
-import org.dreambot.api.methods.ViewportTools;
-import org.dreambot.api.methods.interactive.NPCs;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.script.TaskNode;
-import org.dreambot.api.wrappers.interactive.Model;
 import state.ScriptState;
 
 public class LoggedIn extends TaskNode {
