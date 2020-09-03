@@ -4,6 +4,7 @@ import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.interactive.GameObjects;
+import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
@@ -68,7 +69,7 @@ enum SurvivalTrainingState implements TaskState {
         @Override
         public SurvivalTrainingState nextState() {
             if (iteration > 0) {
-                return null;
+                return CHOP_TREE;
             }
             return CHECK_SKILLS;
         }
@@ -130,12 +131,19 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName().contains("Tree");
+            if (HintArrow.exists()) {
+                if (HintArrowHelper.getName().contains("Tree")) {
+                    return true;
+                } else if (HintArrowHelper.getName().contains("Survival Expert") | Inventory.contains(2511)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return TALK_TO_EXPERT;
         }
 
         @Override
@@ -149,6 +157,7 @@ enum SurvivalTrainingState implements TaskState {
 //
             LogHelper.log("Making a fire");
             Tabs.openWithMouse(Tab.INVENTORY);
+            SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             Tile tile = Me.cleanTile();
 //            ClickMode.LEFT_CLICK;
             Walking.walkExact(tile);
@@ -171,7 +180,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState previousState() {
-            return null;
+            return CHOP_TREE;
         }
 
         @Override
@@ -180,12 +189,20 @@ enum SurvivalTrainingState implements TaskState {
         }
     },
     COOK_SHRIMP {
+        boolean failed = false;
+
         @Override
         public Boolean run() {
+            Tabs.openWithMouse(Tab.INVENTORY);
+            SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             LogHelper.log("Running cook shrimp");
             Item shrimp = Inventory.get(2514);
             // TODO fix this to use on fire.
-            shrimp.useOn(590);
+            shrimp.interact();
+            GameObjects.closest(26185).interact();
+            if (!SleepHelper.sleepUntil(() -> Inventory.contains(315), 7000)) {
+                failed = true;
+            }
             return true;
         }
 
@@ -197,7 +214,40 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState previousState() {
-            return null;
+            return MAKE_FIRE;
+        }
+
+        @Override
+        public TaskState nextState() {
+            if (failed) {
+                return FISH_SHRIMP;
+            }
+            return WALK_TO_CHEF;
+        }
+    },
+    WALK_TO_CHEF {
+        Area chefArea = new Area(new Tile(3075, 3083), new Tile(3075, 3085), new Tile(3078, 3085), new Tile(3078, 3083));
+
+        @Override
+        public Boolean run() {
+            LogHelper.log("Run walk to chef");
+            while (!chefArea.contains(Me.playerObjet().getTile())) {
+                SleepHelper.sleepUntil(() -> Walking.walk(chefArea.getRandomTile()), 30000);
+                SleepHelper.randomSleep(500, 1300);
+            }
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            LogHelper.log("Verify walk to chef");
+            return true;
+//            return HintArrowHelper.getName().contains("Gate");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return COOK_SHRIMP;
         }
 
         @Override
@@ -223,7 +273,7 @@ public class SurvivalTraining extends TaskNode {
     @Override
     public int execute() {
         log("Starting survival training");
-        TaskState state = SurvivalTrainingState.FISHING_NET;
+        TaskState state = SurvivalTrainingState.WALK_TO_CHEF;
         boolean done = false;
         while (!done) {
             if (state.verify()) {
@@ -232,6 +282,6 @@ public class SurvivalTraining extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        return -1;
+        return 1;
     }
 }

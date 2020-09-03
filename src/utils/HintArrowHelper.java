@@ -25,6 +25,9 @@ public class HintArrowHelper {
             return null;
         }
         Tile tile = HintArrow.getTile();
+        if (tile == null) {
+            return null;
+        }
         GameObject[] gameObjects = tile.getTileReference().getObjects();
         if (gameObjects.length == 1) {
             for (GameObject gameObject : gameObjects) {
