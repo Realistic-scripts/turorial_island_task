@@ -17,10 +17,9 @@ public class Main extends TaskScript {
 
         log("starting Tutorial Island");
         getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
-        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
-        addNodes(new LoggedIn(state),
-                new SurvivalTraining(state), new MasterChef(state));
-//        new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
+//        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
+        addNodes(new LoggedIn(state), //new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
+                new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state));
         sleep(10000);
     }
 }

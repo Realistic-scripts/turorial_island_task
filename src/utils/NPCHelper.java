@@ -69,7 +69,7 @@ public class NPCHelper {
         return null;
     }
 
-    private int timeToRead(String text) {
+    public static int timeToRead(String text) {
         String[] words = text.split(" ");
         LogHelper.logMethod(words.length);
         LogHelper.logMethod(ThreadLocalRandom.current().nextDouble(.143, .33));

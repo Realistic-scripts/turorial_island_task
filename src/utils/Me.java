@@ -1,11 +1,14 @@
 package utils;
 
 import org.dreambot.api.methods.MethodContext;
+import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.wrappers.interactive.Player;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.methods.MethodProvider;
 
-public class Me extends MethodContext {
+public class Me {
     public static String name() {
         Player currentPlayer = Players.localPlayer();
         LogHelper.logMethod(currentPlayer.getName());
