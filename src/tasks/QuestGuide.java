@@ -3,15 +3,15 @@ package tasks;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.NPCs;
+import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
-import utils.HintArrowHelper;
-import utils.LogHelper;
-import utils.NPCHelper;
-import utils.SleepHelper;
+import utils.*;
 
 enum QuestGuideState implements TaskState {
     TALK_TO_QUEST_GUIDE {
@@ -86,9 +86,38 @@ enum QuestGuideState implements TaskState {
             return false;
         }
 
+
         @Override
         public TaskState previousState() {
             return TALK_TO_QUEST_GUIDE;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return WALK_TO_MINING_INSTRUCTOR;
+        }
+    },
+    WALK_TO_MINING_INSTRUCTOR {
+        Area miningInstructorArea = new Area(new Tile(3084, 9504), new Tile(3084, 9508), new Tile(3080, 9508), new Tile(3080, 9504));
+
+        @Override
+        public Boolean run() {
+            while (!miningInstructorArea.contains(Me.playerObjet().getTile())) {
+                SleepHelper.sleepUntil(() -> Walking.walk(miningInstructorArea.getRandomTile()), 30000);
+                SleepHelper.randomSleep(500, 1300);
+            }
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            Tile bottomOfLadder = new Tile(3088, 9520, 0);
+            return bottomOfLadder.equals(Me.playerObjet().getTile());
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
         }
 
         @Override

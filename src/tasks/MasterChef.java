@@ -120,7 +120,7 @@ enum MasterChefState implements TaskState {
                 SleepHelper.sleepUntil(() -> Walking.walk(questGuideArea.getRandomTile()), 30000);
                 SleepHelper.randomSleep(500, 1300);
             }
-            return null;
+            return true;
         }
 
         @Override
