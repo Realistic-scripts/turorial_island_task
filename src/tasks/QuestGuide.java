@@ -117,7 +117,7 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public TaskState previousState() {
-            return null;
+            return CLIMB_DOWN_LADDER;
         }
 
         @Override
@@ -151,7 +151,7 @@ public class QuestGuide extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.QUEST_GUIDE);
-        return -1;
+        this.state.set(ScriptState.States.MINING_INSTRUCTOR);
+        return 1;
     }
 }

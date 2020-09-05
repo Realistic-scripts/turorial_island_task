@@ -22,7 +22,7 @@ public class HintArrowHelper {
         }
         return "";
     }
-
+    // TODO add exact interact. The normal interact will just pick the closest one to click on.
     public static void interact(String name) {
         interact(name, null);
     }

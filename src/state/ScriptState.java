@@ -23,7 +23,8 @@ public class ScriptState {
         GG_TO_FISHING,
         SURVIVAL_TRAINING,
         MASTER_CHEF,
-        QUEST_GUIDE;
+        QUEST_GUIDE,
+        MINING_INSTRUCTOR;
     }
 
 }

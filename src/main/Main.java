@@ -19,7 +19,7 @@ public class Main extends TaskScript {
         getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(new LoggedIn(state), //new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
-                new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state));
+                new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state), new MiningInstructor(state));
         sleep(10000);
     }
 }
@@ -30,5 +30,7 @@ public class Main extends TaskScript {
 // org.dreambot.api.utilities.Logger
 // org.dreambot.api.methods.map.Map
 // org.dreambot.api.wrappers.widgets.Menu
-//
+// org.dreambot.api.methods.container.impl.Shop
+
+
 
