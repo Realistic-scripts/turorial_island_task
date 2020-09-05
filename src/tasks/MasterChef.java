@@ -11,7 +11,6 @@ import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.items.Item;
-import org.dreambot.core.W;
 import state.ScriptState;
 import state.TaskState;
 import utils.LogHelper;
@@ -30,14 +29,13 @@ enum MasterChefState implements TaskState {
             while (Dialogues.canContinue()) {
                 Dialogues.spaceToContinue();
                 LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.randomSleep(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 200);
+                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
             }
             return true;
         }
 
         @Override
         public Boolean verify() {
-            LogHelper.log(HintArrow.getPointed());
             if (HintArrow.exists()) {
                 try {
                     return HintArrow.getPointed().getName().contains("Master Chef");
@@ -118,7 +116,7 @@ enum MasterChefState implements TaskState {
 
         @Override
         public Boolean run() {
-            while (!questGuideArea.contains(Me.playerObjet().getTile())){
+            while (!questGuideArea.contains(Me.playerObjet().getTile())) {
                 SleepHelper.sleepUntil(() -> Walking.walk(questGuideArea.getRandomTile()), 30000);
                 SleepHelper.randomSleep(500, 1300);
             }
