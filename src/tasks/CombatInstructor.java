@@ -1,10 +1,12 @@
 package tasks;
 
+import com.ibm.jvm.Log;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
+import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
@@ -100,7 +102,7 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return Inventory.containsAll(1277, 1171);
+            return Inventory.containsAll(1277, 1171) & !Equipment.contains(841) & !Inventory.contains(841);
         }
 
         @Override
@@ -144,8 +146,7 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return true;
-//            return HintArrow.exists() & HintArrowHelper.getName("Gate").equals("") & Equipment.containsAll(1277, 1171);
+            return HintArrow.exists() & HintArrowHelper.getName("Gate").equals("") & Equipment.containsAll(1277, 1171);
         }
 
         @Override
@@ -161,12 +162,52 @@ enum CombatInstructorState implements TaskState {
     KILL_RAT_BOW {
         @Override
         public Boolean run() {
-            return null;
+            Tabs.openWithMouse(Tab.INVENTORY);
+            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.INVENTORY), 3000);
+            Inventory.interact(841, "Wield");
+            SleepHelper.sleepUntil(() -> !Equipment.contains(841), 5000);
+            SleepHelper.randomSleep(800, 1500);
+            Inventory.interact(882, "Wield");
+            SleepHelper.sleepUntil(() -> Equipment.contains(882), 5000);
+            // TODO add messing around with the combat screen and equipment stats screen
+            NPCs.closest(3313).interact();
+            SleepHelper.sleepUntil(() -> Me.playerObjet().isInCombat(), 30000);
+            SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 30000);
+            LogHelper.log("Done killing rat");
+            return true;
         }
 
         @Override
         public Boolean verify() {
+            return HintArrowHelper.getName("Giant rat").contains("Giant rat");
+        }
+
+        @Override
+        public TaskState previousState() {
             return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return WALK_TO_LADDER;
+        }
+    },
+    WALK_TO_LADDER {
+        Area LadderArea = new Area(new Tile(3112, 9525, 0), new Tile(3109, 9523, 0));
+
+        @Override
+        public Boolean run() {
+            while (!LadderArea.contains(Me.playerObjet().getTile())) {
+                SleepHelper.sleepUntil(() -> Walking.walk(LadderArea.getRandomTile()), 30000);
+                SleepHelper.randomSleep(500, 1300);
+            }
+            HintArrowHelper.interact("Ladder");
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return HintArrowHelper.getName("Ladder").contains("Ladder");
         }
 
         @Override
@@ -209,6 +250,6 @@ public class CombatInstructor extends TaskNode {
             done = state == null;
         }
         this.state.set(ScriptState.States.COMBAT_INSTRUCTOR);
-        return -1;
+        return 1;
     }
 }
