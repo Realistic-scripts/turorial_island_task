@@ -1,19 +1,14 @@
 package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.container.impl.Shop;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.script.TaskNode;
-import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
 import state.TaskState;
-import utils.HintArrowHelper;
-import utils.LogHelper;
-import utils.NPCHelper;
-import utils.SleepHelper;
+import utils.*;
 
 enum MiningInstructorState implements TaskState {
     TALK_TO_MINING_GUIDE {
@@ -105,7 +100,12 @@ enum MiningInstructorState implements TaskState {
         public Boolean run() {
             LogHelper.log("Running Make dagger");
 //            HintArrowHelper.interact("Anvil");
-            LogHelper.log(Shop.isOpen());
+            InterfaceHelper interfaceHelper = new InterfaceHelper(InterfaceHelper.widgetIdList());
+            for (int i = 0; i < 1; i++) {
+                LogHelper.log(interfaceHelper.widgetDiff());
+                interfaceHelper.interactWith("Dagger");
+                SleepHelper.sleep(2000);
+            }
             return true;
         }
 
@@ -117,6 +117,27 @@ enum MiningInstructorState implements TaskState {
         @Override
         public TaskState previousState() {
             return TALK_TO_MINING_GUIDE;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return WALK_TO_COMBAT;
+        }
+    },
+    WALK_TO_COMBAT {
+        @Override
+        public Boolean run() {
+            return null;
+        }
+
+        @Override
+        public Boolean verify() {
+            return Inventory.contains(1205);
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
         }
 
         @Override
