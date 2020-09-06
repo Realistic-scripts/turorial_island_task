@@ -12,15 +12,19 @@ import tasks.*;
 
 public class Main extends TaskScript {
     private ScriptState state = new ScriptState(ScriptState.States.MASTER_CHEF);
+
     @Override
     public void onStart() {
 
         log("starting Tutorial Island");
-        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
+//        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
-        addNodes(new LoggedIn(state), //new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
+        addNodes(
+                new LoggedIn(state), //new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
                 new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state), new MiningInstructor(state),
-                new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state));
+                new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
+                new MagicTutor(state)
+        );
         sleep(10000);
     }
 }

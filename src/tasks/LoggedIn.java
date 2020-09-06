@@ -15,7 +15,7 @@ public class LoggedIn extends TaskNode {
     public boolean accept() {
         boolean loggedIn = Client.isLoggedIn();
         if (loggedIn) {
-            this.state.set(ScriptState.States.PRAYER_TUTORIAL);
+            this.state.set(ScriptState.States.MAGIC_TUTOR);
         }
         return !loggedIn;
     }
@@ -24,7 +24,7 @@ public class LoggedIn extends TaskNode {
     public int execute() {
         log("waiting to log in");
         sleepUntil(Client::isLoggedIn, 15000);
-        this.state.set(ScriptState.States.PRAYER_TUTORIAL);
+        this.state.set(ScriptState.States.MAGIC_TUTOR);
 //        ViewportTools viewPortTools = new ViewportTools();
 //        Area area = new Area(new Tile(3092, 3107,0));
 //        Model model = NPCs.closest(3308).getModel();

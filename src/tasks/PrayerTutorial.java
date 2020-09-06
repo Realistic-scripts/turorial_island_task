@@ -6,6 +6,7 @@ import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
+
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
@@ -115,7 +116,7 @@ public class PrayerTutorial extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.PRAYER_TUTORIAL);
-        return -1;
+        this.state.set(ScriptState.States.MAGIC_TUTOR);
+        return 1;
     }
 }
