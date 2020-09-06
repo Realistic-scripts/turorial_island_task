@@ -11,7 +11,8 @@ public class ObjectHelper {
         objectId = objectIdInit;
         currentObject = GameObjects.closest(9398);
     }
-    public void interact(){
+
+    public void interact() {
 
     }
 }

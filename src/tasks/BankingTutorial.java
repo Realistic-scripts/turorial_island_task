@@ -141,7 +141,7 @@ enum BankingTutorialState implements TaskState {
                 Dialogues.spaceToContinue();
                 LogHelper.log(Dialogues.getNPCDialogue());
                 SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300,1000);
+                SleepHelper.randomSleep(300, 1000);
             }
             return true;
 
@@ -162,8 +162,9 @@ enum BankingTutorialState implements TaskState {
             return WALK_TO_PRAYER;
         }
     },
-    WALK_TO_PRAYER{
-        Area PrayerArea = new Area(new Tile(3124,3108,0), new Tile(3122,3104,0));
+    WALK_TO_PRAYER {
+        Area PrayerArea = new Area(new Tile(3124, 3108, 0), new Tile(3122, 3104, 0));
+
         @Override
         public Boolean run() {
             LogHelper.log("Running: WALK_TO_PRAYER");
@@ -188,8 +189,7 @@ enum BankingTutorialState implements TaskState {
         public TaskState nextState() {
             return null;
         }
-    }
-    ;
+    };
 }
 
 public class BankingTutorial extends TaskNode {

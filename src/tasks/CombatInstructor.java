@@ -1,6 +1,5 @@
 package tasks;
 
-import com.ibm.jvm.Log;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.dialogues.Dialogues;

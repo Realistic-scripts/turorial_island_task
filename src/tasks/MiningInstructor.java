@@ -128,7 +128,7 @@ enum MiningInstructorState implements TaskState {
         }
     },
     WALK_TO_COMBAT {
-        Area GateArea = new Area(new Tile(3094, 9503),  new Tile(3093, 9502));
+        Area GateArea = new Area(new Tile(3094, 9503), new Tile(3093, 9502));
         Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
                 new Tile(3107, 9508), new Tile(3105, 9508), new Tile(3105, 9505),
                 new Tile(3102, 9505));
@@ -141,8 +141,7 @@ enum MiningInstructorState implements TaskState {
             }
             GameObjects.closest("Gate").interact();
             SleepHelper.sleepUntil(() -> !GateArea.contains(Me.playerObjet().getTile()), 5000);
-            while (!CombatInstructorArea.contains(Me.playerObjet().getTile()))
-            {
+            while (!CombatInstructorArea.contains(Me.playerObjet().getTile())) {
                 SleepHelper.sleepUntil(() -> Walking.walk(CombatInstructorArea.getRandomTile()), 30000);
                 SleepHelper.randomSleep(500, 1300);
             }

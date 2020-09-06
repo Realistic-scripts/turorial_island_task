@@ -3,7 +3,6 @@ package utils;
 import org.dreambot.api.methods.MethodContext;
 import org.dreambot.api.methods.widget.Widget;
 import org.dreambot.api.methods.widget.Widgets;
-import org.dreambot.api.wrappers.items.Item;
 import org.dreambot.api.wrappers.widgets.WidgetChild;
 
 import java.util.ArrayList;
@@ -54,7 +53,8 @@ public class WidgetHelper extends MethodContext {
     public boolean widgetContainsText(String text) {
         return getWidgetText().contains(text);
     }
-    public WidgetChild child(){
+
+    public WidgetChild child() {
         return childWidget;
     }
 }

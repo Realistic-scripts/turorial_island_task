@@ -20,6 +20,13 @@ public class NPCHelper {
         dialogOptions = Arrays.asList(dialogArray);
     }
 
+    public static int timeToRead(String text) {
+        String[] words = text.split(" ");
+        LogHelper.logMethod(words.length);
+        LogHelper.logMethod(ThreadLocalRandom.current().nextDouble(.143, .33));
+        return (int) ((double) words.length * ThreadLocalRandom.current().nextDouble(.14, .28) * 1000.0);
+    }
+
     public void interact() {
         while (!interactingWithMe()) {
             LogHelper.logMethod("Not interacting with NPC");
@@ -61,19 +68,12 @@ public class NPCHelper {
     private List<String> detectTextChoices() {
         WidgetHelper textWidget = new WidgetHelper(new int[]{1}, 219);
         if (textWidget.valid()) {
-            for (String text: textWidget.allChildText()) {
+            for (String text : textWidget.allChildText()) {
                 LogHelper.logMethod(text);
             }
             return textWidget.allChildText();
         }
         return null;
-    }
-
-    public static int timeToRead(String text) {
-        String[] words = text.split(" ");
-        LogHelper.logMethod(words.length);
-        LogHelper.logMethod(ThreadLocalRandom.current().nextDouble(.143, .33));
-        return (int) ((double) words.length * ThreadLocalRandom.current().nextDouble(.14, .28) * 1000.0);
     }
 
     private boolean interactingWithMe() {

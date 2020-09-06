@@ -1,6 +1,5 @@
 package main;
 
-import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.impl.TaskScript;
@@ -20,7 +19,7 @@ public class Main extends TaskScript {
 //        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(
-                new LoggedIn(state), //new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
+                new LoggedIn(state), new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
                 new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state), new MiningInstructor(state),
                 new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
                 new MagicTutor(state)

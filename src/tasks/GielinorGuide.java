@@ -25,7 +25,7 @@ public class GielinorGuide extends TaskNode {
         NPCHelper gielinorGuide = new NPCHelper(3308, new Integer[]{2});
 //        gielinorGuide.talkTo();
         WidgetHelper settingsWidget = new WidgetHelper(new int[]{38}, 548);
-        if (settingsWidget.child().getActions()!= null) {
+        if (settingsWidget.child().getActions() != null) {
             settingsWidget.child().interact();
         }
         // TODO add some playing with settings here

@@ -6,15 +6,14 @@ import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
-
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
-enum PrayerTutorialState implements TaskState{
-    TALK_TO_MONK{
+enum PrayerTutorialState implements TaskState {
+    TALK_TO_MONK {
         @Override
         public Boolean run() {
             LogHelper.log("Running: TALK_TO_MONK");
@@ -24,7 +23,7 @@ enum PrayerTutorialState implements TaskState{
                 Dialogues.spaceToContinue();
                 LogHelper.log(Dialogues.getNPCDialogue());
                 SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300,1000);
+                SleepHelper.randomSleep(300, 1000);
             }
             // TODO add some reading the prayers here
             Tabs.openWithMouse(Tab.PRAYER);
@@ -35,7 +34,7 @@ enum PrayerTutorialState implements TaskState{
                 Dialogues.spaceToContinue();
                 LogHelper.log(Dialogues.getNPCDialogue());
                 SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300,1000);
+                SleepHelper.randomSleep(300, 1000);
             }
             Tabs.openWithMouse(Tab.FRIENDS);
             HintArrowHelper.interact("Brother Brace");
@@ -44,7 +43,7 @@ enum PrayerTutorialState implements TaskState{
                 Dialogues.spaceToContinue();
                 LogHelper.log(Dialogues.getNPCDialogue());
                 SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300,1000);
+                SleepHelper.randomSleep(300, 1000);
             }
             return true;
         }
@@ -65,7 +64,8 @@ enum PrayerTutorialState implements TaskState{
         }
     },
     WALK_TO_MAGIC_INSTRUCTOR {
-        Area WizardArea = new Area(new Tile(3142,3090,0), new Tile(3140,3088));
+        Area WizardArea = new Area(new Tile(3142, 3090, 0), new Tile(3140, 3088));
+
         @Override
         public Boolean run() {
             while (!WizardArea.contains(Me.playerObjet().getTile())) {
