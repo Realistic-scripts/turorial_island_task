@@ -26,7 +26,8 @@ public class ScriptState {
         QUEST_GUIDE,
         MINING_INSTRUCTOR,
         COMBAT_INSTRUCTOR,
-        BANKING_TUTORIAL;
+        BANKING_TUTORIAL,
+        PRAYER_TUTORIAL;
     }
 
 }

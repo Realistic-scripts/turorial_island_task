@@ -216,7 +216,7 @@ public class BankingTutorial extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.BANKING_TUTORIAL);
-        return -1;
+        this.state.set(ScriptState.States.PRAYER_TUTORIAL);
+        return 1;
     }
 }
