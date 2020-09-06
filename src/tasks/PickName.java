@@ -3,6 +3,7 @@ package tasks;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
+import utils.RandomUsernameGenerator;
 
 public class PickName extends TaskNode {
     @Override
@@ -32,7 +33,7 @@ public class PickName extends TaskNode {
         String widget_text = Widgets.getWidgetChild(162, 44).getText();
         if (widget_text.contains("pick a unique display name")) {
             log("type name widget open");
-            String name = randomName();
+            String name = RandomUsernameGenerator.generate();
 
             if (typeName(name)) {
                 log("Name typed correctly");
@@ -65,7 +66,4 @@ public class PickName extends TaskNode {
         return available.contains(">available<");
     }
 
-    private String randomName() {
-        return "monday_bacon";
-    }
 }

@@ -6,15 +6,15 @@ import org.dreambot.api.script.impl.TaskScript;
 import state.ScriptState;
 import tasks.*;
 
-@ScriptManifest(author = "Realistic", name = "tutorial island task script", version = 0.1, description = "Tut island task.",
+@ScriptManifest(author = "Realistic", name = "Realistic Tutorial Island", version = 0.1,
+        description = "A Tutorial Island script written by Realistic. This script uses the TaskScript system.",
         category = Category.MISC)
 
 public class Main extends TaskScript {
-    private ScriptState state = new ScriptState(ScriptState.States.MASTER_CHEF);
+    private ScriptState state = new ScriptState(ScriptState.States.START);
 
     @Override
     public void onStart() {
-
         log("starting Tutorial Island");
 //        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
@@ -24,7 +24,6 @@ public class Main extends TaskScript {
                 new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
                 new MagicTutor(state)
         );
-        sleep(10000);
     }
 }
 
