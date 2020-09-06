@@ -25,7 +25,8 @@ public class ScriptState {
         MASTER_CHEF,
         QUEST_GUIDE,
         MINING_INSTRUCTOR,
-        COMBAT_INSTRUCTOR;
+        COMBAT_INSTRUCTOR,
+        BANKING_TUTORIAL;
     }
 
 }

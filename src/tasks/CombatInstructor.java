@@ -249,7 +249,7 @@ public class CombatInstructor extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.COMBAT_INSTRUCTOR);
+        this.state.set(ScriptState.States.BANKING_TUTORIAL);
         return 1;
     }
 }
