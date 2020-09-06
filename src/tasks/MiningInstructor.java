@@ -3,8 +3,11 @@ package tasks;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
+import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
@@ -125,9 +128,24 @@ enum MiningInstructorState implements TaskState {
         }
     },
     WALK_TO_COMBAT {
+        Area GateArea = new Area(new Tile(3094, 9503),  new Tile(3093, 9502));
+        Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
+                new Tile(3107, 9508), new Tile(3105, 9508), new Tile(3105, 9505),
+                new Tile(3102, 9505));
+
         @Override
         public Boolean run() {
-            return null;
+            while (!GateArea.contains(Me.playerObjet().getTile())) {
+                SleepHelper.sleepUntil(() -> Walking.walk(GateArea.getRandomTile()), 30000);
+                SleepHelper.randomSleep(500, 1300);
+            }
+            GameObjects.closest("Gate").interact();
+            SleepHelper.sleepUntil(() -> !GateArea.contains(Me.playerObjet().getTile()), 5000);
+            while (!CombatInstructorArea.contains(Me.playerObjet().getTile())) {
+                SleepHelper.sleepUntil(() -> Walking.walk(CombatInstructorArea.getRandomTile()), 30000);
+                SleepHelper.randomSleep(500, 1300);
+            }
+            return true;
         }
 
         @Override
