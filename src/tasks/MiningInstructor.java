@@ -141,7 +141,8 @@ enum MiningInstructorState implements TaskState {
             }
             GameObjects.closest("Gate").interact();
             SleepHelper.sleepUntil(() -> !GateArea.contains(Me.playerObjet().getTile()), 5000);
-            while (!CombatInstructorArea.contains(Me.playerObjet().getTile())) {
+            while (!CombatInstructorArea.contains(Me.playerObjet().getTile()))
+            {
                 SleepHelper.sleepUntil(() -> Walking.walk(CombatInstructorArea.getRandomTile()), 30000);
                 SleepHelper.randomSleep(500, 1300);
             }
@@ -189,7 +190,7 @@ public class MiningInstructor extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.MINING_INSTRUCTOR);
-        return -1;
+        this.state.set(ScriptState.States.COMBAT_INSTRUCTOR);
+        return 1;
     }
 }
