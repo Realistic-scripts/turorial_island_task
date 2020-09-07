@@ -2,13 +2,9 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.filter.Filter;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.items.Item;
@@ -19,18 +15,19 @@ import utils.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static consts.Areas.BankArea;
+import static consts.Areas.PrayerArea;
+import static consts.WidgetsValues.*;
+
 
 enum BankingTutorialState implements TaskState {
     WALK_TO_BANK {
-        Area BankArea = new Area(new Tile(3122, 3123, 0), new Tile(3120, 3121, 0));
-
         @Override
         public Boolean run() {
-            while (!BankArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(BankArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            WalkingHelper bankWalking = new WalkingHelper(BankArea);
+            bankWalking.walk();
             HintArrowHelper.interact("Bank booth");
+            SleepHelper.sleepUntil(() -> !Bank.isOpen(), 5000);
             return null;
         }
 
@@ -70,6 +67,7 @@ enum BankingTutorialState implements TaskState {
 
         @Override
         public Boolean verify() {
+            LogHelper.log(Bank.isOpen());
             return Bank.isOpen();
         }
 
@@ -88,20 +86,13 @@ enum BankingTutorialState implements TaskState {
         public Boolean run() {
             LogHelper.log("Running: POLL_BOOTH");
             HintArrowHelper.interact("Poll booth");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(2000, 4000);
-            }
+            DialogHelper.continueDialog();
             // TODO scroll and explore polls
-            SleepHelper.sleepUntil(() -> Widgets.getWidget(310).isVisible(), 3000);
+            SleepHelper.sleepUntil(() -> Widgets.getWidget(PollBoothParent).isVisible(), 3000);
             SleepHelper.randomSleep(1000, 5000);
-            Widgets.getWidget(310).getChild(2).getChild(11).interact();
+            Widgets.getWidget(PollBoothParent).getChild(PollBoothExitChild).getChild(PollBoothExitGrandChild).interact();
             SleepHelper.randomSleep(500, 1200);
-            // TODO figure out how to see if a widget is closed
-//            SleepHelper.sleepUntil(() -> !Widgets.getWidget(310).isVisible(), 4000);
+            SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(PollBoothParent), 4000);
             return true;
         }
 
@@ -124,32 +115,27 @@ enum BankingTutorialState implements TaskState {
         @Override
         public Boolean run() {
             LogHelper.log("Running: ACCOUNT_GUIDE");
+
             HintArrowHelper.interact("Door");
             SleepHelper.sleepUntil(() -> !HintArrowHelper.getName("Door").contains("Door"), 5000, 1000);
+
             HintArrowHelper.interact("Account Guide");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-            }
-            Tabs.openWithMouse(Tab.ACCOUNT_MANAGEMENT);
+            DialogHelper.continueDialog();
+
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(AccountManagementChildFixed).interact();
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.ACCOUNT_MANAGEMENT), 2000);
+            SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Account Guide").contains("Account Guide"), 5000);
+
             HintArrowHelper.interact("Account Guide");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300, 1000);
-            }
+            DialogHelper.continueDialog();
             return true;
 
         }
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName("Door").contains("Door");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return HintArrowHelper.getName("Door").contains("Door") & !widget.widgetContainsText("Moving on");
         }
 
         @Override
@@ -163,21 +149,18 @@ enum BankingTutorialState implements TaskState {
         }
     },
     WALK_TO_PRAYER {
-        Area PrayerArea = new Area(new Tile(3124, 3108, 0), new Tile(3122, 3104, 0));
-
         @Override
         public Boolean run() {
             LogHelper.log("Running: WALK_TO_PRAYER");
-            while (!PrayerArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(PrayerArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
-            return null;
+            WalkingHelper prayerWalking = new WalkingHelper(PrayerArea);
+            prayerWalking.walk();
+            return true;
         }
 
         @Override
         public Boolean verify() {
-            return Widgets.getWidget(263).getChild(1).getChild(0).getText().contains("Prayer");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("Moving on") | widget.widgetContainsText("Prayer");
         }
 
         @Override
@@ -193,15 +176,9 @@ enum BankingTutorialState implements TaskState {
 }
 
 public class BankingTutorial extends TaskNode {
-    ScriptState state;
-
-    public BankingTutorial(ScriptState state) {
-        this.state = state;
-    }
-
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.BANKING_TUTORIAL;
+        return ScriptState.get() == ScriptState.States.BANKING_TUTORIAL;
     }
 
     @Override
@@ -216,7 +193,7 @@ public class BankingTutorial extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.PRAYER_TUTORIAL);
+        ScriptState.set(ScriptState.States.PRAYER_TUTORIAL);
         return 1;
     }
 }

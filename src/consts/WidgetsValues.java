@@ -29,7 +29,7 @@ public final class WidgetsValues {
     public static final int SettingsWidgetChildFixed = 47;
     public static final int QuestWidgetChildFixed = 53;
     public static final int CombatWidgetChildFixed = 58;
-
+    public static final int AccountManagementChildFixed = 42;
 
 
     public static final int ChatDialogParent = 263;
@@ -44,5 +44,9 @@ public final class WidgetsValues {
     public static final int EquipParent = 84;
     public static final int EquipExitChild = 3;
     public static final int EquipExitGrandChild = 11;
+
+    public static final int PollBoothParent = 310;
+    public static final int PollBoothExitChild = 2;
+    public static final int PollBoothExitGrandChild = 11;
 
 }
