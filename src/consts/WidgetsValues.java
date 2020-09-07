@@ -28,6 +28,8 @@ public final class WidgetsValues {
     public static final int SettingsWidgetChildFullScreen = 47;
     public static final int SettingsWidgetChildFixed = 47;
     public static final int QuestWidgetChildFixed = 53;
+    public static final int CombatWidgetChildFixed = 58;
+
 
 
     public static final int ChatDialogParent = 263;
@@ -35,4 +37,12 @@ public final class WidgetsValues {
     public static final int ChatDialogGrandChild = 0;
 
     public static final int Smithing = 312;
+
+    public static final int EquipmentParent = 387;
+    public static final int EquipmentStats = 2;
+
+    public static final int EquipParent = 84;
+    public static final int EquipExitChild = 3;
+    public static final int EquipExitGrandChild = 11;
+
 }

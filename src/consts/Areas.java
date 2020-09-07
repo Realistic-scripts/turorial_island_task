@@ -18,5 +18,9 @@ public final class Areas {
     public static final Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
             new Tile(3107, 9508), new Tile(3105, 9508), new Tile(3105, 9505),
             new Tile(3102, 9505));
+    public static final Area RatGateAreaOutside = new Area(new Tile(3113, 9519, 0), new Tile(3111, 9518, 0));
+    public static final Area RatGateAreaInside = new Area(new Tile(3110, 9519, 0), new Tile(3108, 9518, 0));
+    public static final Area CombatInstructorEndLadderArea = new Area(new Tile(3112, 9525, 0), new Tile(3109, 9523, 0));
+
 
 }

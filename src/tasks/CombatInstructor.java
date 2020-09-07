@@ -2,20 +2,21 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
-import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.NPCs;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
+
+import static consts.Areas.*;
+import static consts.Items.*;
+import static consts.NPCS.Rat;
+import static consts.WidgetsValues.*;
 
 enum CombatInstructorState implements TaskState {
     TALK_TO_COMBAT_INSTRUCTOR {
@@ -23,12 +24,7 @@ enum CombatInstructorState implements TaskState {
         public Boolean run() {
             LogHelper.log("Running Talk to combat Instructor");
             HintArrowHelper.interact("Combat Instructor");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-            }
+            DialogHelper.continueDialog();
             return true;
         }
 
@@ -44,11 +40,11 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (Inventory.containsAll(1277, 1171)) {
-                return EQUIP_SWORD;
-            } else if (Inventory.containsAll(841, 882)) {
+            if (Inventory.containsAll(Shortbow, BronzeArrow) | Equipment.containsAll(Shortbow, BronzeArrow)) {
                 return KILL_RAT_BOW;
-            } else if (Equipment.containsAll(1277, 1171)) {
+            } else if (Inventory.containsAll(BronzeSword, WoodenShield)) {
+                return EQUIP_SWORD;
+            } else if (Equipment.containsAll(BronzeSword, WoodenShield)) {
                 return KILL_RAT_MELEE;
             }
             return EQUIP_DAGGER;
@@ -59,13 +55,16 @@ enum CombatInstructorState implements TaskState {
         public Boolean run() {
             Tabs.open(Tab.EQUIPMENT);
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.EQUIPMENT), 5000);
-            Widgets.getWidget(387).getChild(2).interact();
-            SleepHelper.randomSleep(1000, 3000);
-//            SleepHelper.sleepUntil(() -> Widgets.getWidget(84).isVisible(), 5000);
-            Inventory.interact(1205, "Wield");
-            Widgets.getWidget(84).getChild(3).getChild(11).interact();
-            // TODO figure out how to wait here until the widget is closed
-//            SleepHelper.sleepUntil(() -> !Widgets.getWidget(84).isVisible(), 5000);
+
+            Widgets.getWidget(EquipmentParent).getChild(EquipmentStats).interact();
+            SleepHelper.randomSleep(3000, 5000);
+            SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(EquipParent), 5000);
+
+            Inventory.interact(BronzeDagger, "Equip");
+            SleepHelper.sleepUntil(() -> Equipment.fullSlotCount() == 1, 7000);
+
+            Widgets.getWidget(EquipParent).getChild(EquipExitChild).getChild(EquipExitGrandChild).interact();
+            SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(EquipParent), 5000);
             return true;
         }
 
@@ -93,15 +92,16 @@ enum CombatInstructorState implements TaskState {
             SleepHelper.sleepUntil(() -> !Equipment.isSlotEmpty(3), 5000);
             Inventory.interact(1171, "Wield");
             SleepHelper.sleepUntil(() -> !Equipment.isSlotEmpty(5), 5000);
-            Widgets.getWidget(164).getChild(60).interact();
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(CombatWidgetChildFixed).interact();
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.COMBAT), 3000);
+
             // TODO mess around in this tab. Equip dagger and go back ect...
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.containsAll(1277, 1171) & !Equipment.contains(841) & !Inventory.contains(841);
+            return Inventory.containsAll(BronzeSword, WoodenShield) & !Equipment.contains(841) & !Inventory.contains(841);
         }
 
         @Override
@@ -115,47 +115,44 @@ enum CombatInstructorState implements TaskState {
         }
     },
     KILL_RAT_MELEE {
-        Area RatGateAreaOutside = new Area(new Tile(3113, 9519, 0), new Tile(3111, 9518, 0));
-        Area RatGateAreaInside = new Area(new Tile(3110, 9519, 0), new Tile(3108, 9518, 0));
-
         @Override
         public Boolean run() {
             LogHelper.log("Running: Killing rat melee");
-            while (!RatGateAreaOutside.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(RatGateAreaOutside.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+
+            WalkingHelper outsideRatGateWalker = new WalkingHelper(RatGateAreaOutside);
+            outsideRatGateWalker.walk();
             GameObjects.closest("Gate").interact();
+            SleepHelper.sleepUntil(() -> RatGateAreaInside.contains(Me.playerObjet().getTile()), 3000);
+
             // TODO add some checking to see if someone is attacking your rat
             HintArrowHelper.interact("Giant rat");
             SleepHelper.sleepUntil(() -> Me.playerObjet().isInCombat(), 10000);
             SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 10000);
-            while (!RatGateAreaInside.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(RatGateAreaInside.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+
+            WalkingHelper insideRatGateWalker = new WalkingHelper(RatGateAreaInside);
+            insideRatGateWalker.walk();
             GameObjects.closest("Gate").interact();
             SleepHelper.sleepUntil(() -> RatGateAreaOutside.contains(Me.playerObjet().getTile()), 3000);
-            while (!CombatInstructorArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(CombatInstructorArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
-            return null;
+
+            WalkingHelper combatInstructorWalking = new WalkingHelper(CombatInstructorArea);
+            combatInstructorWalking.walk();
+            return true;
         }
 
         @Override
         public Boolean verify() {
-            return HintArrow.exists() & HintArrowHelper.getName("Gate").equals("") & Equipment.containsAll(1277, 1171);
+            return HintArrow.exists() & HintArrowHelper.getName("Gate").equals("") &
+                    Equipment.containsAll(BronzeSword, WoodenShield);
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return EQUIP_SWORD;
         }
 
         @Override
         public TaskState nextState() {
-            return null;
+            return TALK_TO_COMBAT_INSTRUCTOR;
         }
     },
     KILL_RAT_BOW {
@@ -163,13 +160,17 @@ enum CombatInstructorState implements TaskState {
         public Boolean run() {
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.INVENTORY), 3000);
-            Inventory.interact(841, "Wield");
-            SleepHelper.sleepUntil(() -> !Equipment.contains(841), 5000);
+
+            Inventory.interact(Shortbow, "Wield");
+            SleepHelper.sleepUntil(() -> !Equipment.contains(Shortbow), 5000);
             SleepHelper.randomSleep(800, 1500);
-            Inventory.interact(882, "Wield");
-            SleepHelper.sleepUntil(() -> Equipment.contains(882), 5000);
+
+            Inventory.interact(BronzeArrow, "Wield");
+            SleepHelper.sleepUntil(() -> Equipment.contains(BronzeArrow), 5000);
+
+            SleepHelper.randomSleep(800, 1500);
             // TODO add messing around with the combat screen and equipment stats screen
-            NPCs.closest(3313).interact();
+            NPCs.closest(Rat).interact();
             SleepHelper.sleepUntil(() -> Me.playerObjet().isInCombat(), 30000);
             SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 30000);
             LogHelper.log("Done killing rat");
@@ -178,12 +179,13 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName("Giant rat").contains("Giant rat");
+            return HintArrowHelper.getName("Giant rat").contains("Giant rat") &
+                    Inventory.containsAll(Shortbow, BronzeArrow);
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return TALK_TO_COMBAT_INSTRUCTOR;
         }
 
         @Override
@@ -192,14 +194,10 @@ enum CombatInstructorState implements TaskState {
         }
     },
     WALK_TO_LADDER {
-        Area LadderArea = new Area(new Tile(3112, 9525, 0), new Tile(3109, 9523, 0));
-
         @Override
         public Boolean run() {
-            while (!LadderArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(LadderArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            WalkingHelper endLadderArea = new WalkingHelper(CombatInstructorEndLadderArea);
+            endLadderArea.walk();
             HintArrowHelper.interact("Ladder");
             return true;
         }
@@ -219,21 +217,13 @@ enum CombatInstructorState implements TaskState {
             return null;
         }
     };
-    Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
-            new Tile(3107, 9508), new Tile(3105, 9508), new Tile(3105, 9505),
-            new Tile(3102, 9505));
 }
 
 public class CombatInstructor extends TaskNode {
-    ScriptState state;
-
-    public CombatInstructor(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.COMBAT_INSTRUCTOR;
+        return ScriptState.get() == ScriptState.States.COMBAT_INSTRUCTOR;
     }
 
     @Override
@@ -248,7 +238,7 @@ public class CombatInstructor extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.BANKING_TUTORIAL);
+        ScriptState.set(ScriptState.States.BANKING_TUTORIAL);
         return 1;
     }
 }

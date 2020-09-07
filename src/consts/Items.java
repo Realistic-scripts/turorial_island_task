@@ -13,4 +13,10 @@ public final class Items {
     public static final int BronzeBar = 2349;
     public static final int Hammer = 2347;
     public static final int BronzeDagger = 1205;
+    public static final int BronzeSword = 1277;
+    public static final int WoodenShield = 1171;
+    public static final int Shortbow = 841;
+    public static final int BronzeArrow = 882;
+
+
 }
