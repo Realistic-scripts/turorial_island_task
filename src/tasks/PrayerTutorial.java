@@ -1,16 +1,17 @@
 package tasks;
 
 import org.dreambot.api.methods.dialogues.Dialogues;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
+
+import static consts.Areas.WizardArea;
+import static consts.WidgetsValues.*;
 
 enum PrayerTutorialState implements TaskState {
     TALK_TO_MONK {
@@ -19,32 +20,26 @@ enum PrayerTutorialState implements TaskState {
             LogHelper.log("Running: TALK_TO_MONK");
             HintArrowHelper.interact("Brother Brace");
             SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300, 1000);
-            }
+            DialogHelper.continueDialog();
+
+            SleepHelper.randomSleep(900, 1400);
             // TODO add some reading the prayers here
-            Tabs.openWithMouse(Tab.PRAYER);
-            SleepHelper.randomSleep(1500, 4000);
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(PrayerChildFixed).interact();
+            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.PRAYER), 5000);
+
+            SleepHelper.sleepUntil(HintArrow::exists, 5000);
+            SleepHelper.randomSleep(900, 1400);
             HintArrowHelper.interact("Brother Brace");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300, 1000);
-            }
-            Tabs.openWithMouse(Tab.FRIENDS);
+            DialogHelper.continueDialog();
+
+            SleepHelper.randomSleep(900, 1400);
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(FriendsListChildFixed).interact();
+            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.FRIENDS), 5000);
+            SleepHelper.sleepUntil(HintArrow::exists, 5000);
+
+            SleepHelper.randomSleep(900, 1400);
             HintArrowHelper.interact("Brother Brace");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-                SleepHelper.randomSleep(300, 1000);
-            }
+            DialogHelper.continueDialog();
             return true;
         }
 
@@ -64,25 +59,22 @@ enum PrayerTutorialState implements TaskState {
         }
     },
     WALK_TO_MAGIC_INSTRUCTOR {
-        Area WizardArea = new Area(new Tile(3142, 3090, 0), new Tile(3140, 3088));
-
         @Override
         public Boolean run() {
-            while (!WizardArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(WizardArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
-            return null;
+            WalkingHelper wizardArea = new WalkingHelper(WizardArea);
+            wizardArea.walk();
+            return true;
         }
 
         @Override
         public Boolean verify() {
-            return Widgets.getWidget(263).getChild(1).getChild(0).getText().contains("wizard");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("Wizard") | widget.widgetContainsText("final instructor");
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return TALK_TO_MONK;
         }
 
         @Override
@@ -93,15 +85,10 @@ enum PrayerTutorialState implements TaskState {
 }
 
 public class PrayerTutorial extends TaskNode {
-    ScriptState state;
-
-    public PrayerTutorial(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.PRAYER_TUTORIAL;
+        return ScriptState.get() == ScriptState.States.PRAYER_TUTORIAL;
     }
 
     @Override
@@ -116,7 +103,7 @@ public class PrayerTutorial extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.MAGIC_TUTOR);
+        ScriptState.set(ScriptState.States.MAGIC_TUTOR);
         return 1;
     }
 }

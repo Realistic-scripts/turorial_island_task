@@ -30,6 +30,9 @@ public final class WidgetsValues {
     public static final int QuestWidgetChildFixed = 53;
     public static final int CombatWidgetChildFixed = 58;
     public static final int AccountManagementChildFixed = 42;
+    public static final int PrayerChildFixed = 63;
+    public static final int FriendsListChildFixed = 43;
+
 
 
     public static final int ChatDialogParent = 263;
