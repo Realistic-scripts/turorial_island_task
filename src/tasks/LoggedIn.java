@@ -15,7 +15,7 @@ public class LoggedIn extends TaskNode {
     public boolean accept() {
         boolean loggedIn = Client.isLoggedIn();
         if (loggedIn) {
-            this.state.set(ScriptState.States.PICK_NAME);
+            this.state.set(ScriptState.States.GIELINOR_GUIDE);
         }
         return !loggedIn;
     }
@@ -24,15 +24,7 @@ public class LoggedIn extends TaskNode {
     public int execute() {
         log("waiting to log in");
         sleepUntil(Client::isLoggedIn, 15000);
-        this.state.set(ScriptState.States.PICK_NAME);
-//        ViewportTools viewPortTools = new ViewportTools();
-//        Area area = new Area(new Tile(3092, 3107,0));
-//        Model model = NPCs.closest(3308).getModel();
-
-//        log(NPCs.closest(3308).getName());
-//        log(viewPortTools.isVisibleOnMainScreen(viewPortTools.getSuitablePointFor(viewPortTools.getModelArea(NPCs.closest(3308)))));
-//        log(NPCs.closest(3317).getCenterPoint().x);
-
+        this.state.set(ScriptState.States.GIELINOR_GUIDE);
         return 1;
     }
 }

@@ -19,7 +19,8 @@ public class Main extends TaskScript {
 //        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(
-                new LoggedIn(state), new PickName(), new PickAppearance(), new GielinorGuide(), new GGToFishing(),
+                new LoggedIn(state), new GielinorGuide(state),
+//               new PickAppearance(), new GielinorGuideOld(), new GGToFishing(),
                 new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state), new MiningInstructor(state),
                 new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
                 new MagicTutor(state)
@@ -34,6 +35,10 @@ public class Main extends TaskScript {
 // org.dreambot.api.methods.map.Map
 // org.dreambot.api.wrappers.widgets.Menu
 // org.dreambot.api.methods.container.impl.Shop
-
+/*
+TODO:
+    Add storing state locally with username hash
+    Resuming from local state
+ */
 
 

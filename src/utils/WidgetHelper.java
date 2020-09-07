@@ -11,6 +11,10 @@ import java.util.List;
 public class WidgetHelper extends MethodContext {
     private WidgetChild childWidget = null;
 
+    public WidgetHelper(int parentWidgetId) {
+
+    }
+
     public WidgetHelper(int[] childIds, int parentWidgetId) {
         Widget parentWidget = Widgets.getWidget(parentWidgetId);
         for (int childId : childIds) {
@@ -28,6 +32,18 @@ public class WidgetHelper extends MethodContext {
                 }
             }
         }
+    }
+
+    public static boolean widgetExists(int parentWidgetId) {
+        try {
+            Widget widget = Widgets.getWidget(parentWidgetId);
+            if (widget == null) {
+                return false;
+            }
+        } catch (NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 
     public boolean valid() {

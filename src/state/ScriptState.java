@@ -17,10 +17,7 @@ public class ScriptState {
 
     public enum States {
         START,
-        PICK_NAME,
-        PICK_APPEARANCE,
-        GG,
-        GG_TO_FISHING,
+        GIELINOR_GUIDE,
         SURVIVAL_TRAINING,
         MASTER_CHEF,
         QUEST_GUIDE,

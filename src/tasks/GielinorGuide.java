@@ -1,36 +1,109 @@
 package tasks;
 
+import org.dreambot.api.methods.dialogues.Dialogues;
+import org.dreambot.api.methods.input.Keyboard;
+import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
-import utils.NPCHelper;
+import state.ScriptState;
+import state.TaskState;
+import utils.LogHelper;
+import utils.SleepHelper;
 import utils.WidgetHelper;
 
+import static consts.WidgetsValues.*;
+
+enum GielinorGuideState implements TaskState {
+    PICK_NAME {
+        @Override
+        public Boolean run() {
+            // TODO test this more.
+            LogHelper.log("Running: PICK_NAME");
+            if (Dialogues.canEnterInput()) {
+                String name = "a";  //RandomUsernameGenerator.generate();
+                Keyboard.type(name, true);
+                SleepHelper.sleepUntil(() -> !Dialogues.canEnterInput(), 10000);
+                SleepHelper.sleepUntil(() ->
+                        Widgets.getWidget(ChooseDisplayNameParent).getChild(DisplayNameChild).getText().equals(name), 10000);
+                LogHelper.log(Widgets.getWidget(ChooseDisplayNameParent).getChild(DisplayNameChild).getText());
+            }
+            SleepHelper.randomSleep(1500, 3000);
+            boolean IsAvailable = Widgets.getWidget(ChooseDisplayNameParent).getChild(ValidNameChild).getText().contains("Great");
+            if (IsAvailable) {
+                Widgets.getWidget(ChooseDisplayNameParent).getChild(SetNameChild).interact();
+                SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(ChooseDisplayNameParent), 10000);
+                return true;
+            }
+            Widgets.getWidget(ChooseDisplayNameParent).getChild(ChooseDisplayNameChild).interact();
+            SleepHelper.sleepUntil(Dialogues::canEnterInput, 10000);
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return WidgetHelper.widgetExists(ChooseDisplayNameParent);
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            if (WidgetHelper.widgetExists(ChooseDisplayNameParent)) {
+                return PICK_NAME;
+            }
+            return PICK_APPEARANCE;
+        }
+    },
+    PICK_APPEARANCE {
+        @Override
+        public Boolean run() {
+            return null;
+        }
+
+        @Override
+        public Boolean verify() {
+            return WidgetHelper.widgetExists(PickAppearanceParent);
+        }
+
+        @Override
+        public TaskState previousState() {
+            return PICK_NAME;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return null;
+        }
+    }
+}
 
 public class GielinorGuide extends TaskNode {
-//    TODO this needs to change. On first time load this will fail.
-//    private final NPC gG = new NPC(3308);
+    ScriptState state;
+
+    public GielinorGuide(ScriptState state) {
+        this.state = state;
+    }
 
     @Override
     public boolean accept() {
-        log("Checking if Gielinor Guide is valid");
-        WidgetHelper widget = new WidgetHelper(new int[]{1, 0}, 263);
-        // TODO change this to work with both widget dialogs.
-        // maybe use org.dreambot.api.methods.hint.HintArrow?
-        return widget.widgetContainsText("Before you begin, have a read through");
+        return this.state.get() == ScriptState.States.GIELINOR_GUIDE;
     }
 
     @Override
     public int execute() {
-//        TODO add some playing around with the camera and zoom
-        log("Starting Gielinor Guide");
-        NPCHelper gielinorGuide = new NPCHelper(3308, new Integer[]{2});
-//        gielinorGuide.talkTo();
-        WidgetHelper settingsWidget = new WidgetHelper(new int[]{38}, 548);
-        if (settingsWidget.child().getActions() != null) {
-            settingsWidget.child().interact();
+        log("Starting Quest Guide");
+        TaskState state = GielinorGuideState.PICK_NAME;
+        boolean done = false;
+        while (!done) {
+            if (state.verify()) {
+                state.run();
+            }
+            state = state.nextState();
+            done = state == null;
         }
-        // TODO add some playing with settings here
-        gielinorGuide.talkTo();
-
+        this.state.set(ScriptState.States.SURVIVAL_TRAINING);
         return -1;
     }
 }
