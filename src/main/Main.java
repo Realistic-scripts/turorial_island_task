@@ -1,29 +1,31 @@
 package main;
 
+import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.impl.TaskScript;
 import state.ScriptState;
-import tasks.*;
+import tasks.GielinorGuide;
+import tasks.MasterChef;
+import tasks.QuestGuide;
+import tasks.SurvivalTraining;
 
 @ScriptManifest(author = "Realistic", name = "Realistic Tutorial Island", version = 0.1,
         description = "A Tutorial Island script written by Realistic. This script uses the TaskScript system.",
         category = Category.MISC)
 
 public class Main extends TaskScript {
-    private ScriptState state = new ScriptState(ScriptState.States.START);
 
     @Override
     public void onStart() {
         log("starting Tutorial Island");
-//        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
-//        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
+        log(ScriptState.get());
+        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
+        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(
-                new LoggedIn(state), new GielinorGuide(state),
-//               new PickAppearance(), new GielinorGuideOld(), new GGToFishing(),
-                new SurvivalTraining(state), new MasterChef(state), new QuestGuide(state), new MiningInstructor(state),
-                new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
-                new MagicTutor(state)
+                new GielinorGuide(), new SurvivalTraining(), new MasterChef(), new QuestGuide() //,new MiningInstructor(state),
+//                new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
+//                new MagicTutor(state)
         );
     }
 }

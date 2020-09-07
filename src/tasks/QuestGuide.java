@@ -1,8 +1,6 @@
 package tasks;
 
-import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
-import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
@@ -13,37 +11,28 @@ import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
+import static consts.WidgetsValues.QuestWidgetChild;
+import static consts.WidgetsValues.TabWidgetParent;
+
 enum QuestGuideState implements TaskState {
     TALK_TO_QUEST_GUIDE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running TALK_TO_QUEST_GUIDE");
-            if (!Dialogues.canContinue()) {
-                LogHelper.log("Clicking on quest guide");
-                NPCs.closest(3312).interact();
+            HintArrowHelper.interact("Quest Guide");
+            DialogHelper.continueDialog();
+            if (!Tabs.isOpen(Tab.QUEST)) {
+                WidgetHelper widgetHelper = new WidgetHelper(new int[]{QuestWidgetChild}, TabWidgetParent);
+                widgetHelper.child().interact();
+                SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
+                SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
             }
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-            }
-            Tabs.open(Tab.QUEST);
-            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
             return true;
         }
 
         @Override
         public Boolean verify() {
             LogHelper.log("Verifying TALK_TO_QUEST_GUIDE");
-            if (HintArrow.exists()) {
-                try {
-                    return HintArrow.getPointed().getName().contains("Quest Guide");
-                } catch (NullPointerException e) {
-                    return false;
-                }
-            }
-            return false;
+            return HintArrowHelper.getName("Quest Guide").contains("Quest Guide");
         }
 
         @Override
@@ -53,15 +42,8 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (HintArrow.exists()) {
-                try {
-                    if (HintArrow.getPointed().getName().contains("Quest Guide")) {
-                        LogHelper.log("Recursive TALK_TO_QUEST_GUIDE call");
-                        return TALK_TO_QUEST_GUIDE;
-                    }
-                } catch (NullPointerException e) {
-                    return CLIMB_DOWN_LADDER;
-                }
+            if (HintArrowHelper.getName("Quest Guide").contains("Quest Guide")) {
+                return TALK_TO_QUEST_GUIDE;
             }
             return CLIMB_DOWN_LADDER;
         }
@@ -76,14 +58,7 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
-            if (HintArrow.exists()) {
-                try {
-                    return HintArrowHelper.getName("Ladder").contains("Ladder");
-                } catch (NullPointerException e) {
-                    return false;
-                }
-            }
-            return false;
+            return HintArrowHelper.getName("Ladder").contains("Ladder");
         }
 
 
@@ -128,15 +103,10 @@ enum QuestGuideState implements TaskState {
 }
 
 public class QuestGuide extends TaskNode {
-    ScriptState state;
-
-    public QuestGuide(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.QUEST_GUIDE;
+        return ScriptState.get() == ScriptState.States.QUEST_GUIDE;
     }
 
     @Override
@@ -151,7 +121,7 @@ public class QuestGuide extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.MINING_INSTRUCTOR);
+        ScriptState.set(ScriptState.States.MINING_INSTRUCTOR);
         return 1;
     }
 }

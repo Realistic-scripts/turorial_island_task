@@ -2,49 +2,36 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
-import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
-import utils.LogHelper;
-import utils.Me;
-import utils.NPCHelper;
+import utils.DialogHelper;
+import utils.HintArrowHelper;
 import utils.SleepHelper;
+import utils.WalkingHelper;
+
+import static consts.Areas.questGuideArea;
+import static consts.Items.Bread;
+import static consts.Items.BreadDough;
 
 enum MasterChefState implements TaskState {
     TALK_TO_CHEF {
         @Override
         public Boolean run() {
             if (!Dialogues.canContinue()) {
-                HintArrow.getPointed().interact();
+                HintArrowHelper.interact("Master Chef");
             }
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-            }
+            DialogHelper.continueDialog();
             return true;
         }
 
         @Override
         public Boolean verify() {
-            if (HintArrow.exists()) {
-                try {
-                    return HintArrow.getPointed().getName().contains("Master Chef");
-                } catch (NullPointerException e) {
-                    return false;
-                }
-            }
-
-            return false;
+            return HintArrowHelper.getName("Master Chef").contains("Master Chef");
         }
 
         @Override
@@ -76,7 +63,7 @@ enum MasterChefState implements TaskState {
 
         @Override
         public TaskState previousState() {
-            return null;
+            return TALK_TO_CHEF;
         }
 
         @Override
@@ -96,12 +83,12 @@ enum MasterChefState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return Inventory.contains(2307);
+            return Inventory.contains(BreadDough);
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return MAKE_BREAD_DOUGH;
         }
 
         @Override
@@ -110,22 +97,16 @@ enum MasterChefState implements TaskState {
         }
     },
     WALK_TO {
-        Area questGuideArea = new Area(new Tile(3087, 3124), new Tile(3087, 3120),
-                new Tile(3084, 3120), new Tile(3084, 3124), new Tile(3085, 3124),
-                new Tile(3086, 3125));
-
         @Override
         public Boolean run() {
-            while (!questGuideArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(questGuideArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            WalkingHelper walkingHelper = new WalkingHelper(questGuideArea);
+            walkingHelper.walk();
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.contains(2309);
+            return Inventory.contains(Bread);
         }
 
         @Override
@@ -141,15 +122,10 @@ enum MasterChefState implements TaskState {
 }
 
 public class MasterChef extends TaskNode {
-    ScriptState state;
-
-    public MasterChef(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.MASTER_CHEF;
+        return ScriptState.get() == ScriptState.States.MASTER_CHEF;
     }
 
     @Override
@@ -164,7 +140,7 @@ public class MasterChef extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.QUEST_GUIDE);
+        ScriptState.set(ScriptState.States.QUEST_GUIDE);
         return 1;
     }
 }

@@ -173,9 +173,10 @@ enum GielinorGuideState implements TaskState {
     WALK_TO_SURVIVAL_GUIDE {
         @Override
         public Boolean run() {
+            LogHelper.log("Running: WALK_TO_SURVIVAL_GUIDE");
             WalkingHelper walkingHelper = new WalkingHelper(survivalExpertArea);
             walkingHelper.walk();
-            return null;
+            return true;
         }
 
         @Override
@@ -197,20 +198,16 @@ enum GielinorGuideState implements TaskState {
 }
 
 public class GielinorGuide extends TaskNode {
-    ScriptState state;
-
-    public GielinorGuide(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.GIELINOR_GUIDE;
+        return ScriptState.get() == ScriptState.States.GIELINOR_GUIDE;
     }
 
     @Override
     public int execute() {
-        log("Starting Quest Guide");
+        log("Starting Gielinor Guide");
+        log(ScriptState.get());
         TaskState state = GielinorGuideState.PICK_NAME;
         boolean done = false;
         while (!done) {
@@ -220,7 +217,9 @@ public class GielinorGuide extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.SURVIVAL_TRAINING);
-        return -1;
+        log("Finishing Gielinor Guide");
+        ScriptState.set(ScriptState.States.SURVIVAL_TRAINING);
+        log(ScriptState.get());
+        return 0;
     }
 }

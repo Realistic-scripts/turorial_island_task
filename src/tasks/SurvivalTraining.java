@@ -15,8 +15,38 @@ import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
+import static consts.Items.*;
+import static consts.WidgetsValues.*;
+import static consts.Areas.*;
+
 // TODO add storing state in file
 enum SurvivalTrainingState implements TaskState {
+    TALK_TO_EXPERT {
+        @Override
+        public Boolean run() {
+            HintArrowHelper.interact("Survival Expert");
+            DialogHelper.continueDialog();
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return HintArrowHelper.getName().contains("Survival Expert");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            if (Inventory.contains(Hatchet)) {
+                return CHOP_TREE;
+            }
+            return FISHING_NET;
+        }
+    },
     FISHING_NET {
         @Override
         public Boolean run() {
@@ -28,9 +58,10 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
+
             // TODO check if there is a net in the inv
-            LogHelper.log("Checking fishing net");
-            return true;
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("To view the item");
         }
 
         @Override
@@ -49,7 +80,7 @@ enum SurvivalTrainingState implements TaskState {
         @Override
         public Boolean run() {
             HintArrowHelper.interact("running Fishing Spot");
-            SleepHelper.sleepUntil(() -> Inventory.contains(2514), 5000);
+            SleepHelper.sleepUntil(() -> Inventory.contains(RawShrimp), 10000);
             iteration++;
             return true;
         }
@@ -84,7 +115,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return true;
+            return Inventory.contains(RawShrimp);
         }
 
         @Override
@@ -97,34 +128,11 @@ enum SurvivalTrainingState implements TaskState {
             return TALK_TO_EXPERT;
         }
     },
-    TALK_TO_EXPERT {
-        @Override
-        public Boolean run() {
-            NPCHelper survivalExpertNPC = new NPCHelper(8503, new Integer[]{});
-            SleepHelper.sleepUntil(survivalExpertNPC::talkTo, 30000);
-            return true;
-        }
-
-        @Override
-        public Boolean verify() {
-            return HintArrowHelper.getName().contains("Survival Expert");
-        }
-
-        @Override
-        public TaskState previousState() {
-            return CHECK_SKILLS;
-        }
-
-        @Override
-        public TaskState nextState() {
-            return CHOP_TREE;
-        }
-    },
     CHOP_TREE {
         @Override
         public Boolean run() {
             HintArrowHelper.interact("Tree");
-            SleepHelper.sleepUntil(() -> Inventory.contains(2511), 15000);
+            SleepHelper.sleepUntil(() -> Inventory.contains(Log), 15000);
             Keyboard.type(" ", false);
             return true;
         }
@@ -159,23 +167,21 @@ enum SurvivalTrainingState implements TaskState {
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             Tile tile = Me.cleanTile();
-//            ClickMode.LEFT_CLICK;
             Walking.walkExact(tile);
-            Item log = Inventory.get(2511);
-            log.useOn(590);
+            Item log = Inventory.get(Log);
+            log.useOn(TinderBox);
             // TODO this needs to wait longer to check to see if it is done walking and making the fire
             SleepHelper.sleep(2000); // HACK Find a better way. Maybe add a wrapper that checks more then one walk animation in a row?
             SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808 &
                     Me.playerObjet().getAnimation() == -1, 45000);
             LogHelper.log("done making fire");
-
             return true;
         }
 
         @Override
         public Boolean verify() {
             LogHelper.log("Checking make fire");
-            return Inventory.containsAll(2511, 590) & GameObjects.closest(26185) == null;
+            return Inventory.containsAll(Log, TinderBox) & GameObjects.closest(Fire) == null;
         }
 
         @Override
@@ -226,23 +232,20 @@ enum SurvivalTrainingState implements TaskState {
         }
     },
     WALK_TO_CHEF {
-        Area chefArea = new Area(new Tile(3075, 3083), new Tile(3075, 3085), new Tile(3078, 3085), new Tile(3078, 3083));
 
         @Override
         public Boolean run() {
             LogHelper.log("Run walk to chef");
-            while (!chefArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(chefArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            WalkingHelper walkingHelper = new WalkingHelper(chefArea);
+            walkingHelper.walk();
             return true;
         }
 
         @Override
         public Boolean verify() {
             LogHelper.log("Verify walk to chef");
-            return true;
-//            return HintArrowHelper.getName().contains("Gate");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("Chef");
         }
 
         @Override
@@ -259,21 +262,17 @@ enum SurvivalTrainingState implements TaskState {
 }
 
 public class SurvivalTraining extends TaskNode {
-    ScriptState state;
 
-    public SurvivalTraining(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.SURVIVAL_TRAINING;
+        return ScriptState.get() == ScriptState.States.SURVIVAL_TRAINING;
     }
 
     @Override
     public int execute() {
         log("Starting survival training");
-        TaskState state = SurvivalTrainingState.FISHING_NET;
+        TaskState state = SurvivalTrainingState.TALK_TO_EXPERT;
         boolean done = false;
         while (!done) {
             if (state.verify()) {
@@ -282,7 +281,7 @@ public class SurvivalTraining extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.MASTER_CHEF);
+        ScriptState.set(ScriptState.States.MASTER_CHEF);
         return 1;
     }
 }

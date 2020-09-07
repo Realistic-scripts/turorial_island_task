@@ -1,18 +1,19 @@
 package state;
 
 public class ScriptState {
-    private States state;
+    private static final ScriptState scriptState = new ScriptState(States.GIELINOR_GUIDE);
+    public States state;
 
     public ScriptState(States state) {
         this.state = state;
     }
 
-    public States get() {
-        return this.state;
+    public static States get() {
+        return scriptState.state;
     }
 
-    public void set(States state) {
-        this.state = state;
+    public static void set(States state) {
+        scriptState.state = state;
     }
 
     public enum States {
