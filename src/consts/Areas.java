@@ -2,6 +2,7 @@ package consts;
 
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
+import org.dreambot.core.A;
 
 public final class Areas {
     public static final Area survivalExpertArea = new Area(
@@ -24,6 +25,8 @@ public final class Areas {
     public static final Area BankArea = new Area(new Tile(3122, 3123, 0), new Tile(3120, 3121, 0));
     public static final Area PrayerArea = new Area(new Tile(3124, 3108, 0), new Tile(3122, 3104, 0));
     public static final Area WizardArea = new Area(new Tile(3142, 3090, 0), new Tile(3140, 3088));
+
+    public static final Area Lumbridge = new Area(new Tile(3233,3234,0), new Tile(3230, 3231, 0));
 
 
 }

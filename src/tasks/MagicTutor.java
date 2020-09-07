@@ -118,7 +118,7 @@ public class MagicTutor extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        ScriptState.set(ScriptState.States.MAGIC_TUTOR);
-        return -1;
+        ScriptState.set(ScriptState.States.ADVENTURE_JON);
+        return 1;
     }
 }

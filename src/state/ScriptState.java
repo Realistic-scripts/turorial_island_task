@@ -1,7 +1,7 @@
 package state;
 
 public class ScriptState {
-    private static final ScriptState scriptState = new ScriptState(States.MAGIC_TUTOR);
+    private static final ScriptState scriptState = new ScriptState(States.GIELINOR_GUIDE);
     public States state;
 
     public ScriptState(States state) {
@@ -26,7 +26,8 @@ public class ScriptState {
         COMBAT_INSTRUCTOR,
         BANKING_TUTORIAL,
         PRAYER_TUTORIAL,
-        MAGIC_TUTOR;
+        MAGIC_TUTOR,
+        ADVENTURE_JON;
     }
 
 }
