@@ -1,14 +1,20 @@
 package tasks;
 
+import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.input.Keyboard;
+import org.dreambot.api.methods.widget.Widget;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
+import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
 import state.TaskState;
 import utils.LogHelper;
 import utils.SleepHelper;
 import utils.WidgetHelper;
+
+import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static consts.WidgetsValues.*;
 
@@ -59,7 +65,36 @@ enum GielinorGuideState implements TaskState {
     PICK_APPEARANCE {
         @Override
         public Boolean run() {
-            return null;
+            pickGender();
+            int changeRounds = ThreadLocalRandom.current().nextInt(2, 6);
+            boolean firstRound = true;
+            for (int i = 0; i <= changeRounds; i++) {
+                int AttributeSetToChange = ThreadLocalRandom.current().nextInt(0, AllAppearance.length);
+                int[] AttributeList = AllAppearance[AttributeSetToChange];
+                int TimesToSetAttributeList = ThreadLocalRandom.current().nextInt(0, AllAppearance.length * 2);
+                for (int j = 0; j <= TimesToSetAttributeList; j++) {
+                    int AttributeToChangeChildId;
+                    if (firstRound) {
+                        AttributeToChangeChildId = ThreadLocalRandom.current().nextInt(0, 2);
+                    } else {
+                        AttributeToChangeChildId = ThreadLocalRandom.current().nextInt(0, AttributeList.length);
+                    }
+                    AttributeToChangeChildId = AttributeList[AttributeToChangeChildId];
+                    firstRound = false;
+                    Rectangle widgetLocation = Widgets.getWidget(PickAppearanceParent).getChild(AttributeToChangeChildId).getRectangle();
+                    if (!moveMouse(widgetLocation)) {
+                        continue;
+                    }
+                    int TimesToClick = ThreadLocalRandom.current().nextInt(1, 6);
+                    for (int k = 0; k <= TimesToClick; k++) {
+                        Mouse.click();
+                        SleepHelper.randomSleep(800, 3000);
+                    }
+                }
+            }
+            Widgets.getWidget(PickAppearanceParent).getChild(Accept).interact();
+            SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(PickAppearanceParent), 5000);
+            return true;
         }
 
         @Override
@@ -75,6 +110,30 @@ enum GielinorGuideState implements TaskState {
         @Override
         public TaskState nextState() {
             return null;
+        }
+
+        private void pickGender() {
+            int random_num = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+            Widgets.getWidget(PickAppearanceParent).getChild(Female);
+            if (random_num != 0) {
+                SleepHelper.randomSleep(1000, 6000);
+                Widgets.getWidget(PickAppearanceParent).getChild(Male);
+            }
+
+        }
+
+        private boolean moveMouse(Rectangle widgetLocation) {
+            // TODO this still needs some work. It still misses some of the widgets
+            widgetLocation.grow(-1, -1);
+            SleepHelper.sleepUntil(() -> Mouse.move(widgetLocation), 1000);
+            while (Menu.getCount() != 2) {
+                widgetLocation.grow(-1, -1);
+                SleepHelper.sleepUntil(() -> Mouse.move(widgetLocation), 1000);
+                if (widgetLocation.height < 0 | widgetLocation.width < 0) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
