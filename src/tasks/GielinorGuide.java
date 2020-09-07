@@ -3,19 +3,20 @@ package tasks;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.input.Keyboard;
-import org.dreambot.api.methods.widget.Widget;
+import org.dreambot.api.methods.tabs.Tab;
+import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
 import state.TaskState;
-import utils.LogHelper;
-import utils.SleepHelper;
-import utils.WidgetHelper;
+import utils.*;
 
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static consts.Areas.survivalExpertArea;
+import static consts.DialogTrees.GielinorGuidePastPlayer;
 import static consts.WidgetsValues.*;
 
 enum GielinorGuideState implements TaskState {
@@ -109,7 +110,7 @@ enum GielinorGuideState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            return null;
+            return TALK_TO_GIELINOR_GUIDE;
         }
 
         private void pickGender() {
@@ -134,6 +135,63 @@ enum GielinorGuideState implements TaskState {
                 }
             }
             return true;
+        }
+    },
+    TALK_TO_GIELINOR_GUIDE {
+        @Override
+        public Boolean run() {
+            // TODO add some random looking around the room
+            HintArrowHelper.interact("Gielinor Guide");
+            DialogHelper dialogHelper = new DialogHelper(GielinorGuidePastPlayer);
+            dialogHelper.branchingDialog();
+            if (!Tabs.isOpen(Tab.OPTIONS)) {
+                Widgets.getWidget(SettingsWidgetParentFixed).getChild(SettingsWidgetChildFixed).interact();
+                SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
+                // TODO add looking around the settings menu
+            }
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return HintArrowHelper.getName("Gielinor Guide").contains("Gielinor Guide");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return PICK_APPEARANCE;
+        }
+
+        @Override
+        public TaskState nextState() {
+            if (HintArrowHelper.getName("Gielinor Guide").contains("Gielinor Guide")) {
+                return TALK_TO_GIELINOR_GUIDE;
+            }
+            return WALK_TO_SURVIVAL_GUIDE;
+        }
+    },
+    WALK_TO_SURVIVAL_GUIDE {
+        @Override
+        public Boolean run() {
+            WalkingHelper walkingHelper = new WalkingHelper(survivalExpertArea);
+            walkingHelper.walk();
+            return null;
+        }
+
+        @Override
+        public Boolean verify() {
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("to meet your first") | widget.widgetContainsText("Moving around");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return TALK_TO_GIELINOR_GUIDE;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return null;
         }
     }
 }

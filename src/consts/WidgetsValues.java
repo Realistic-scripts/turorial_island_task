@@ -21,4 +21,13 @@ public final class WidgetsValues {
     public static final int[] Legs = {111, 118, 121, 129};
     public static final int[] Feet = {112, 119, 124, 130};
     public static final int[][] AllAppearance = {Head, Jaw, Torso, Arms, Hands, Legs, Feet};
+
+    public static final int SettingsWidgetParentFullScreen = 164;
+    public static final int SettingsWidgetChildFullScreen = 47;
+    public static final int SettingsWidgetParentFixed = 164;
+    public static final int SettingsWidgetChildFixed = 47;
+
+    public static final int ChatDialogParent = 263;
+    public static final int ChatDialogChild = 1;
+    public static final int ChatDialogGrandChild = 0;
 }

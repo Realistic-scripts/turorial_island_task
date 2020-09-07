@@ -39,6 +39,8 @@ public class Main extends TaskScript {
 TODO:
     Add storing state locally with username hash
     Resuming from local state
+    Add some walking checks
+    Add stalled checks. IE: If it is taking too long in one place.
  */
 
 

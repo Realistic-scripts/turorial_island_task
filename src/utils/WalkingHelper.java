@@ -19,13 +19,15 @@ public class WalkingHelper {
     }
 
     public void walk() {
+        // TODO add checking to see if the player gets stuck.
         if (tile == null & area != null) {
             getAreaTile();
         }
         Player player = Players.localPlayer();
         while (tile.walkingDistance(player.getTile()) > 3) {
+            LogHelper.log(Me.playerObjet().getWalkAnimation());
             Walking.walk(tile);
-            SleepHelper.randomSleep(500, 1200);
+            SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808, 3000);
         }
     }
 

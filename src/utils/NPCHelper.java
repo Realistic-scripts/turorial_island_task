@@ -44,7 +44,7 @@ public class NPCHelper {
     }
 
     public void navigateText() {
-        // TODO use org.dreambot.api.methods.dialogues.Dialogues dumbass.
+        // TODO use org.dreambot.api.methods.dialogues.Dialogues, dumbass.
 
 
         while (new WidgetHelper(new int[]{4}, 231).valid() | new WidgetHelper(new int[]{1}, 219).valid()) {
