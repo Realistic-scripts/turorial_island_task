@@ -145,7 +145,7 @@ enum GielinorGuideState implements TaskState {
             DialogHelper dialogHelper = new DialogHelper(GielinorGuidePastPlayer);
             dialogHelper.branchingDialog();
             if (!Tabs.isOpen(Tab.OPTIONS)) {
-                Widgets.getWidget(SettingsWidgetParentFixed).getChild(SettingsWidgetChildFixed).interact();
+                Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
                 // TODO add looking around the settings menu
             }

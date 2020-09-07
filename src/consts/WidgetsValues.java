@@ -23,15 +23,16 @@ public final class WidgetsValues {
     public static final int[][] AllAppearance = {Head, Jaw, Torso, Arms, Hands, Legs, Feet};
 
     // Tab widgets
-    public static final int TabWidgetParent= 548;
+    public static final int TabWidgetParentFixedScreen = 548;
     public static final int SettingsWidgetParentFullScreen = 164;
     public static final int SettingsWidgetChildFullScreen = 47;
-    public static final int SettingsWidgetParentFixed = 548;
     public static final int SettingsWidgetChildFixed = 47;
-    public static final int QuestWidgetChild = 53;
+    public static final int QuestWidgetChildFixed = 53;
 
 
     public static final int ChatDialogParent = 263;
     public static final int ChatDialogChild = 1;
     public static final int ChatDialogGrandChild = 0;
+
+    public static final int Smithing = 312;
 }

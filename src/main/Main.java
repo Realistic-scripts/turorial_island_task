@@ -5,10 +5,7 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.impl.TaskScript;
 import state.ScriptState;
-import tasks.GielinorGuide;
-import tasks.MasterChef;
-import tasks.QuestGuide;
-import tasks.SurvivalTraining;
+import tasks.*;
 
 @ScriptManifest(author = "Realistic", name = "Realistic Tutorial Island", version = 0.1,
         description = "A Tutorial Island script written by Realistic. This script uses the TaskScript system.",
@@ -23,7 +20,7 @@ public class Main extends TaskScript {
         getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
         getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(
-                new GielinorGuide(), new SurvivalTraining(), new MasterChef(), new QuestGuide() //,new MiningInstructor(state),
+                new GielinorGuide(), new SurvivalTraining(), new MasterChef(), new QuestGuide(), new MiningInstructor()
 //                new CombatInstructor(state), new BankingTutorial(state), new PrayerTutorial(state),
 //                new MagicTutor(state)
         );

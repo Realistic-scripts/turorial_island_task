@@ -1,17 +1,20 @@
 package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
+
+import static consts.Areas.CombatInstructorArea;
+import static consts.Areas.MiningGateArea;
+import static consts.GameObjects.Anvil;
+import static consts.GameObjects.Furnace;
+import static consts.Items.*;
+import static consts.WidgetsValues.Smithing;
 
 enum MiningInstructorState implements TaskState {
     TALK_TO_MINING_GUIDE {
@@ -19,12 +22,7 @@ enum MiningInstructorState implements TaskState {
         public Boolean run() {
             LogHelper.log("Talk to mining guide");
             HintArrowHelper.interact("Mining Instructor");
-            SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
-            while (Dialogues.canContinue()) {
-                Dialogues.spaceToContinue();
-                LogHelper.log(Dialogues.getNPCDialogue());
-                SleepHelper.sleepRange(NPCHelper.timeToRead(Dialogues.getNPCDialogue()), 600);
-            }
+            DialogHelper.continueDialog();
             Tabs.open(Tab.INVENTORY);
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.INVENTORY), 5000);
             return null;
@@ -42,8 +40,10 @@ enum MiningInstructorState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (Inventory.contains(2347)) {
+            if (Inventory.contains(BronzeBar)) {
                 return MAKE_DAGGER;
+            } else if (Inventory.contains(BronzeDagger)) {
+                return WALK_TO_COMBAT;
             }
             return MINE_ORE;
         }
@@ -53,9 +53,9 @@ enum MiningInstructorState implements TaskState {
         public Boolean run() {
             LogHelper.log("Run Mining ore");
             HintArrowHelper.interact("Rocks");
-            SleepHelper.sleepUntil(() -> Inventory.contains(438), 6000);
+            SleepHelper.sleepUntil(() -> Inventory.contains(Tin), 10000);
             HintArrowHelper.interact("Rocks");
-            SleepHelper.sleepUntil(() -> Inventory.contains(436), 6000);
+            SleepHelper.sleepUntil(() -> Inventory.contains(Copper), 10000);
             return true;
         }
 
@@ -78,14 +78,14 @@ enum MiningInstructorState implements TaskState {
         @Override
         public Boolean run() {
             LogHelper.log("Running smelt Furnace");
-            GameObjects.closest(10082).interact();
-            SleepHelper.sleepUntil(() -> !Inventory.containsAll(438, 436), 8000);
+            GameObjects.closest(Furnace).interact();
+            SleepHelper.sleepUntil(() -> !Inventory.containsAll(Copper, Tin), 8000);
             return null;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.containsAll(438, 436);
+            return Inventory.containsAll(Copper, Tin);
         }
 
         @Override
@@ -102,19 +102,22 @@ enum MiningInstructorState implements TaskState {
         @Override
         public Boolean run() {
             LogHelper.log("Running Make dagger");
-//            HintArrowHelper.interact("Anvil");
             InterfaceHelper interfaceHelper = new InterfaceHelper(InterfaceHelper.widgetIdList());
+            GameObjects.closest(Anvil).interact();
+            SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(Smithing), 12000);
+            // TODO this is rough.
             for (int i = 0; i < 1; i++) {
                 LogHelper.log(interfaceHelper.widgetDiff());
                 interfaceHelper.interactWith("Dagger");
                 SleepHelper.sleep(2000);
             }
+
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.containsAll(2349, 2347);
+            return Inventory.containsAll(BronzeBar, Hammer);
         }
 
         @Override
@@ -128,34 +131,25 @@ enum MiningInstructorState implements TaskState {
         }
     },
     WALK_TO_COMBAT {
-        Area GateArea = new Area(new Tile(3094, 9503), new Tile(3093, 9502));
-        Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
-                new Tile(3107, 9508), new Tile(3105, 9508), new Tile(3105, 9505),
-                new Tile(3102, 9505));
-
         @Override
         public Boolean run() {
-            while (!GateArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(GateArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            WalkingHelper miningGameAreaWalking = new WalkingHelper(MiningGateArea);
+            miningGameAreaWalking.walk();
             GameObjects.closest("Gate").interact();
-            SleepHelper.sleepUntil(() -> !GateArea.contains(Me.playerObjet().getTile()), 5000);
-            while (!CombatInstructorArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(CombatInstructorArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            SleepHelper.sleepUntil(() -> !MiningGateArea.contains(Me.playerObjet().getTile()), 5000);
+            WalkingHelper combatInstructorWalking = new WalkingHelper(CombatInstructorArea);
+            combatInstructorWalking.walk();
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.contains(1205);
+            return Inventory.contains(BronzeDagger);
         }
 
         @Override
         public TaskState previousState() {
-            return null;
+            return MAKE_DAGGER;
         }
 
         @Override
@@ -166,15 +160,10 @@ enum MiningInstructorState implements TaskState {
 }
 
 public class MiningInstructor extends TaskNode {
-    ScriptState state;
-
-    public MiningInstructor(ScriptState state) {
-        this.state = state;
-    }
 
     @Override
     public boolean accept() {
-        return this.state.get() == ScriptState.States.MINING_INSTRUCTOR;
+        return ScriptState.get() == ScriptState.States.MINING_INSTRUCTOR;
     }
 
     @Override
@@ -189,7 +178,7 @@ public class MiningInstructor extends TaskNode {
             state = state.nextState();
             done = state == null;
         }
-        this.state.set(ScriptState.States.COMBAT_INSTRUCTOR);
+        ScriptState.set(ScriptState.States.COMBAT_INSTRUCTOR);
         return 1;
     }
 }

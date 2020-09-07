@@ -1,18 +1,17 @@
 package tasks;
 
 import org.dreambot.api.methods.hint.HintArrow;
-import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
-import static consts.WidgetsValues.QuestWidgetChild;
-import static consts.WidgetsValues.TabWidgetParent;
+import static consts.Areas.miningInstructorArea;
+import static consts.WidgetsValues.QuestWidgetChildFixed;
+import static consts.WidgetsValues.TabWidgetParentFixedScreen;
 
 enum QuestGuideState implements TaskState {
     TALK_TO_QUEST_GUIDE {
@@ -21,7 +20,7 @@ enum QuestGuideState implements TaskState {
             HintArrowHelper.interact("Quest Guide");
             DialogHelper.continueDialog();
             if (!Tabs.isOpen(Tab.QUEST)) {
-                WidgetHelper widgetHelper = new WidgetHelper(new int[]{QuestWidgetChild}, TabWidgetParent);
+                WidgetHelper widgetHelper = new WidgetHelper(new int[]{QuestWidgetChildFixed}, TabWidgetParentFixedScreen);
                 widgetHelper.child().interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
                 SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
@@ -61,7 +60,6 @@ enum QuestGuideState implements TaskState {
             return HintArrowHelper.getName("Ladder").contains("Ladder");
         }
 
-
         @Override
         public TaskState previousState() {
             return TALK_TO_QUEST_GUIDE;
@@ -73,14 +71,11 @@ enum QuestGuideState implements TaskState {
         }
     },
     WALK_TO_MINING_INSTRUCTOR {
-        Area miningInstructorArea = new Area(new Tile(3084, 9504), new Tile(3084, 9508), new Tile(3080, 9508), new Tile(3080, 9504));
-
         @Override
         public Boolean run() {
-            while (!miningInstructorArea.contains(Me.playerObjet().getTile())) {
-                SleepHelper.sleepUntil(() -> Walking.walk(miningInstructorArea.getRandomTile()), 30000);
-                SleepHelper.randomSleep(500, 1300);
-            }
+            LogHelper.log("Walking to mining instructor");
+            WalkingHelper walkingHelper = new WalkingHelper(miningInstructorArea);
+            walkingHelper.walk();
             return true;
         }
 

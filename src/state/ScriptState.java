@@ -1,7 +1,7 @@
 package state;
 
 public class ScriptState {
-    private static final ScriptState scriptState = new ScriptState(States.GIELINOR_GUIDE);
+    private static final ScriptState scriptState = new ScriptState(States.MINING_INSTRUCTOR);
     public States state;
 
     public ScriptState(States state) {
