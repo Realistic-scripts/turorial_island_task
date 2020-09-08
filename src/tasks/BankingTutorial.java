@@ -116,7 +116,9 @@ enum BankingTutorialState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            return ACCOUNT_GUIDE;
+            // TODO check what the chat box says
+            return null;
+//            return ACCOUNT_GUIDE;
         }
     },
     ACCOUNT_GUIDE {
@@ -207,6 +209,6 @@ public class BankingTutorial extends TaskNode {
             done = state == null;
         }
         ScriptState.set(ScriptState.States.PRAYER_TUTORIAL);
-        return 1;
+        return -1;
     }
 }

@@ -1,5 +1,6 @@
 package tasks;
 
+import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.magic.Magic;
 import org.dreambot.api.methods.magic.Normal;
@@ -23,8 +24,9 @@ enum MagicTutorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             DialogHelper.continueDialog();
+            SleepHelper.sleepUntil(() -> !Dialogues.canContinue(), 5000);
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             return HintArrowHelper.getName("Magic Instructor").contains("Magic Instructor") & !widget.widgetContainsText("To the mainland");
         }
 
@@ -117,8 +119,9 @@ enum MagicTutorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             DialogHelper.continueDialog();
+            SleepHelper.sleepUntil(() -> !Dialogues.canContinue(), 5000);
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             return widget.widgetContainsText("To the mainland");
         }
 

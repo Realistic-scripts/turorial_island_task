@@ -1,6 +1,7 @@
 package tasks;
 
 import org.dreambot.api.methods.hint.HintArrow;
+import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
@@ -8,6 +9,8 @@ import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 import static consts.Areas.bottomOfLadder;
 import static consts.Areas.miningInstructorArea;
@@ -23,6 +26,7 @@ enum QuestGuideState implements TaskState {
                 DialogHelper.continueDialog();
             }
             while (!Tabs.isOpen(Tab.QUEST)) {
+                LogHelper.log("Waiting to open quest tab");
                 Widgets.getWidget(TabWidgetParentFixedScreen).getChild(QuestWidgetChildFixed).interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
                 SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
@@ -54,6 +58,7 @@ enum QuestGuideState implements TaskState {
         @Override
         public Boolean run() {
             LogHelper.log("Climbing down ladder");
+            Camera.mouseRotateTo(ThreadLocalRandom.current().nextInt(623,1126), 382);
             HintArrowHelper.interact("Ladder", "climb-down");
             SleepHelper.sleepUntil(() -> bottomOfLadder.equals(Me.playerObjet().getTile()), 10000, 1000);
             return true;
