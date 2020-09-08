@@ -28,6 +28,7 @@ public class WalkingHelper {
             LogHelper.log(Me.playerObjet().getWalkAnimation());
             Walking.walk(tile);
             SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808, 3000);
+            SleepHelper.randomSleep(300, 800);
         }
     }
 

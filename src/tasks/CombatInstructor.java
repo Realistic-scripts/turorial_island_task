@@ -41,7 +41,7 @@ enum CombatInstructorState implements TaskState {
         @Override
         public TaskState nextState() {
             if (Inventory.containsAll(Shortbow, BronzeArrow) | Equipment.containsAll(Shortbow, BronzeArrow)) {
-                return KILL_RAT_BOW;
+                return EQUIP_BOW;
             } else if (Inventory.containsAll(BronzeSword, WoodenShield)) {
                 return EQUIP_SWORD;
             } else if (Equipment.containsAll(BronzeSword, WoodenShield)) {
@@ -53,7 +53,7 @@ enum CombatInstructorState implements TaskState {
     EQUIP_DAGGER {
         @Override
         public Boolean run() {
-            Tabs.open(Tab.EQUIPMENT);
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(EquipmentWidgetChildFixed).interact();
             SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.EQUIPMENT), 5000);
 
             Widgets.getWidget(EquipmentParent).getChild(EquipmentStats).interact();
@@ -125,9 +125,15 @@ enum CombatInstructorState implements TaskState {
             SleepHelper.sleepUntil(() -> RatGateAreaInside.contains(Me.playerObjet().getTile()), 3000);
 
             // TODO add some checking to see if someone is attacking your rat
-            HintArrowHelper.interact("Giant rat");
-            SleepHelper.sleepUntil(() -> Me.playerObjet().isInCombat(), 10000);
-            SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 10000);
+            while (!Me.playerObjet().isInCombat()) {
+                if (HintArrow.exists()) {
+                    HintArrowHelper.interact("Giant rat");
+                } else {
+                    NPCs.closest("Giant Rat").interact();
+                }
+                SleepHelper.randomSleep(1000, 3000);
+            }
+            SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 120000);
 
             WalkingHelper insideRatGateWalker = new WalkingHelper(RatGateAreaInside);
             insideRatGateWalker.walk();
@@ -141,8 +147,15 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrow.exists() & HintArrowHelper.getName("Gate").equals("") &
-                    Equipment.containsAll(BronzeSword, WoodenShield);
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+
+            return (
+                    (
+                            HintArrow.exists() &
+                                    (HintArrowHelper.getName("Gate").equals("") | HintArrowHelper.getName("Giant Rat").equals("Giant Rat"))
+                    ) | widget.widgetContainsText("see a bar over your head") &
+                            Equipment.containsAll(BronzeSword, WoodenShield)
+            );
         }
 
         @Override
@@ -155,7 +168,7 @@ enum CombatInstructorState implements TaskState {
             return TALK_TO_COMBAT_INSTRUCTOR;
         }
     },
-    KILL_RAT_BOW {
+    EQUIP_BOW {
         @Override
         public Boolean run() {
             Tabs.openWithMouse(Tab.INVENTORY);
@@ -170,17 +183,39 @@ enum CombatInstructorState implements TaskState {
 
             SleepHelper.randomSleep(800, 1500);
             // TODO add messing around with the combat screen and equipment stats screen
-            NPCs.closest(Rat).interact();
-            SleepHelper.sleepUntil(() -> Me.playerObjet().isInCombat(), 30000);
-            SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 30000);
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            return Inventory.containsAll(Shortbow, BronzeArrow);
+        }
+
+        @Override
+        public TaskState previousState() {
+            return TALK_TO_COMBAT_INSTRUCTOR;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return KILL_RAT_BOW;
+        }
+    },
+    KILL_RAT_BOW {
+        @Override
+        public Boolean run() {
+            while (!Me.playerObjet().isInCombat()) {
+                NPCs.closest(Rat).interact();
+                SleepHelper.randomSleep(1000, 3000);
+            }
+            SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 120000);
             LogHelper.log("Done killing rat");
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName("Giant rat").contains("Giant rat") &
-                    Inventory.containsAll(Shortbow, BronzeArrow);
+            return HintArrowHelper.getName("Giant rat").contains("Giant rat") & Equipment.containsAll(Shortbow, BronzeArrow);
         }
 
         @Override
@@ -204,7 +239,9 @@ enum CombatInstructorState implements TaskState {
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName("Ladder").contains("Ladder");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+
+            return widget.widgetContainsText("just talk to the combat instructor") & widget.widgetContainsText("Moving on");
         }
 
         @Override
@@ -228,7 +265,7 @@ public class CombatInstructor extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Quest Guide");
+        log("Starting Combat Instructor");
         TaskState state = CombatInstructorState.TALK_TO_COMBAT_INSTRUCTOR;
         boolean done = false;
         while (!done) {

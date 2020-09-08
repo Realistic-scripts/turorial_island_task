@@ -1,7 +1,7 @@
 package state;
 
 public class ScriptState {
-    private static final ScriptState scriptState = new ScriptState(States.MINING_INSTRUCTOR);
+    private static final ScriptState scriptState = new ScriptState(States.MAGIC_TUTOR);
     public States state;
 
     public ScriptState(States state) {

@@ -26,8 +26,11 @@ enum BankingTutorialState implements TaskState {
         public Boolean run() {
             WalkingHelper bankWalking = new WalkingHelper(BankArea);
             bankWalking.walk();
-            HintArrowHelper.interact("Bank booth");
-            SleepHelper.sleepUntil(() -> !Bank.isOpen(), 5000);
+            while (!Bank.isOpen()) {
+                HintArrowHelper.interact("Bank booth");
+                SleepHelper.randomSleep(1500, 3000);
+            }
+
             return null;
         }
 
@@ -84,21 +87,23 @@ enum BankingTutorialState implements TaskState {
     POLL_BOOTH {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: POLL_BOOTH");
-            HintArrowHelper.interact("Poll booth");
-            DialogHelper.continueDialog();
-            // TODO scroll and explore polls
-            SleepHelper.sleepUntil(() -> Widgets.getWidget(PollBoothParent).isVisible(), 3000);
-            SleepHelper.randomSleep(1000, 5000);
-            Widgets.getWidget(PollBoothParent).getChild(PollBoothExitChild).getChild(PollBoothExitGrandChild).interact();
+            if (!WidgetHelper.widgetExists(PollBoothParentFixedScreen)) {
+                LogHelper.log("Running: POLL_BOOTH");
+                HintArrowHelper.interact("Poll booth");
+                DialogHelper.continueDialog();
+                // TODO scroll and explore polls
+                SleepHelper.sleepUntil(() -> Widgets.getWidget(PollBoothParentFixedScreen).isVisible(), 3000);
+                SleepHelper.randomSleep(1000, 5000);
+            }
+            Widgets.getWidget(PollBoothParentFixedScreen).getChild(PollBoothExitChild).getChild(PollBoothExitGrandChild).interact();
             SleepHelper.randomSleep(500, 1200);
-            SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(PollBoothParent), 4000);
+            SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(PollBoothParentFixedScreen), 4000);
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return HintArrowHelper.getName("Poll booth").contains("Poll booth");
+            return HintArrowHelper.getName("Poll booth").contains("Poll booth") | WidgetHelper.widgetExists(PollBoothParentFixedScreen);
         }
 
         @Override
@@ -118,12 +123,13 @@ enum BankingTutorialState implements TaskState {
 
             HintArrowHelper.interact("Door");
             SleepHelper.sleepUntil(() -> !HintArrowHelper.getName("Door").contains("Door"), 5000, 1000);
+            SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Account Guide").contains("Account Guide"), 5000, 1000);
 
             HintArrowHelper.interact("Account Guide");
             DialogHelper.continueDialog();
 
             Widgets.getWidget(TabWidgetParentFixedScreen).getChild(AccountManagementChildFixed).interact();
-            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.ACCOUNT_MANAGEMENT), 2000);
+            SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.ACCOUNT_MANAGEMENT), 4000);
             SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Account Guide").contains("Account Guide"), 5000);
 
             HintArrowHelper.interact("Account Guide");
@@ -135,7 +141,8 @@ enum BankingTutorialState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
-            return HintArrowHelper.getName("Door").contains("Door") & !widget.widgetContainsText("Moving on");
+            return (HintArrowHelper.getName("Door").contains("Door") | HintArrowHelper.getName("Account Guide").contains("Account Guide"))
+                    & !widget.widgetContainsText("Moving on");
         }
 
         @Override
