@@ -3,10 +3,12 @@ package tasks;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.filter.Filter;
+import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
+import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
@@ -121,9 +123,12 @@ enum BankingTutorialState implements TaskState {
         public Boolean run() {
             LogHelper.log("Running: ACCOUNT_GUIDE");
 
-            HintArrowHelper.interact("Door");
-            SleepHelper.sleepUntil(() -> !HintArrowHelper.getName("Door").contains("Door"), 5000, 1000);
-            SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Account Guide").contains("Account Guide"), 5000, 1000);
+//            HintArrowHelper.interact("Door");
+            if (HintArrowHelper.getName("Door").contains("Door")) {
+                GameObjects.closest(9721).interact();
+                SleepHelper.sleepUntil(() -> !HintArrowHelper.getName("Door").contains("Door"), 5000, 1000);
+                SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Account Guide").contains("Account Guide"), 5000, 1000);
+            }
 
             HintArrowHelper.interact("Account Guide");
             DialogHelper.continueDialog();

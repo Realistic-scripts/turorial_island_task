@@ -209,6 +209,8 @@ enum CombatInstructorState implements TaskState {
                 SleepHelper.randomSleep(1000, 3000);
             }
             SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 120000);
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            SleepHelper.sleepUntil(() -> widget.widgetContainsText("Moving on"), 10000);
             LogHelper.log("Done killing rat");
             return true;
         }

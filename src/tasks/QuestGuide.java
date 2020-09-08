@@ -1,7 +1,6 @@
 package tasks;
 
 import org.dreambot.api.methods.hint.HintArrow;
-import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
@@ -19,9 +18,11 @@ enum QuestGuideState implements TaskState {
         @Override
         public Boolean run() {
             LogHelper.log("Running: TALK_TO_QUEST_GUIDE");
-            HintArrowHelper.interact("Quest Guide");
-            DialogHelper.continueDialog();
-            if (!Tabs.isOpen(Tab.QUEST)) {
+            if (HintArrow.exists()) {
+                HintArrowHelper.interact("Quest Guide");
+                DialogHelper.continueDialog();
+            }
+            while (!Tabs.isOpen(Tab.QUEST)) {
                 Widgets.getWidget(TabWidgetParentFixedScreen).getChild(QuestWidgetChildFixed).interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
                 SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
@@ -54,7 +55,7 @@ enum QuestGuideState implements TaskState {
         public Boolean run() {
             LogHelper.log("Climbing down ladder");
             HintArrowHelper.interact("Ladder", "climb-down");
-            SleepHelper.sleepUntil(() ->  bottomOfLadder.equals(Me.playerObjet().getTile()), 10000, 1000);
+            SleepHelper.sleepUntil(() -> bottomOfLadder.equals(Me.playerObjet().getTile()), 10000, 1000);
             return true;
         }
 

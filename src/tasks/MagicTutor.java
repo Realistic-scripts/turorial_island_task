@@ -5,7 +5,6 @@ import org.dreambot.api.methods.magic.Magic;
 import org.dreambot.api.methods.magic.Normal;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
-import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
@@ -35,7 +34,7 @@ enum MagicTutorState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (TO_THE_MAINLAND.verify()){
+            if (TO_THE_MAINLAND.verify()) {
                 return TO_THE_MAINLAND;
             }
             if (HintArrowHelper.getName("Chicken").contains("Chicken")) {
@@ -81,10 +80,6 @@ enum MagicTutorState implements TaskState {
                 SleepHelper.randomSleep(6000, 8000);
                 DialogHelper.continueDialog();
             }
-            if(Magic.isSpellSelected()){
-                Walking.walk(Me.playerObjet().getTile());
-                DialogHelper.continueDialog();
-            }
             SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Magic Instructor").contains("Magic Instructor"), 3000);
             return null;
         }
@@ -104,9 +99,13 @@ enum MagicTutorState implements TaskState {
             return TO_THE_MAINLAND;
         }
     },
-    TO_THE_MAINLAND{
+    TO_THE_MAINLAND {
         @Override
         public Boolean run() {
+            if (Magic.isSpellSelected()) {
+                Tabs.openWithMouse(Tab.INVENTORY);
+                SleepHelper.randomSleep(1000, 2000);
+            }
             HintArrowHelper.interact("Magic Instructor");
 
             DialogHelper wizardDialog = new DialogHelper(new int[]{1, 3});

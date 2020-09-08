@@ -81,8 +81,8 @@ enum MiningInstructorState implements TaskState {
             LogHelper.log("Running smelt Furnace");
             GameObjects.closest(Furnace).interact();
             SleepHelper.sleepUntil(() -> !Inventory.containsAll(Copper, Tin), 8000);
-            SleepHelper.sleepUntil(HintArrow::exists, 10000, 1000);
-            return null;
+            SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Mining Instructor").contains("Mining Instructor"), 10000, 1000);
+            return true;
         }
 
         @Override

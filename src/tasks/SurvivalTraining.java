@@ -25,6 +25,7 @@ enum SurvivalTrainingState implements TaskState {
         public Boolean run() {
             HintArrowHelper.interact("Survival Expert");
             DialogHelper.continueDialog();
+            SleepHelper.sleepUntil(HintArrow::exists, 1000);
             return true;
         }
 
@@ -40,7 +41,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (Inventory.contains(CookedShrimp)){
+            if (Inventory.contains(CookedShrimp)) {
                 return WALK_TO_CHEF;
             } else if (Inventory.contains(Hatchet)) {
                 return CHOP_TREE;
@@ -76,7 +77,6 @@ enum SurvivalTrainingState implements TaskState {
         }
     },
     FISH_SHRIMP {
-
         @Override
         public Boolean run() {
             HintArrowHelper.interact("running Fishing Spot");
@@ -132,7 +132,7 @@ enum SurvivalTrainingState implements TaskState {
     CHOP_TREE {
         @Override
         public Boolean run() {
-            GameObjects.closest("Tree");
+            GameObjects.closest("Tree").interact();
             SleepHelper.sleepUntil(() -> Inventory.contains(Log), 15000);
             DialogHelper.continueDialog();
             return true;
@@ -242,7 +242,7 @@ enum SurvivalTrainingState implements TaskState {
         public Boolean verify() {
             LogHelper.log("Verify walk to chef");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
-            return widget.widgetContainsText("Chef")| widget.widgetContainsText("just cooked your first meal");
+            return widget.widgetContainsText("Chef") | widget.widgetContainsText("just cooked your first meal");
         }
 
         @Override

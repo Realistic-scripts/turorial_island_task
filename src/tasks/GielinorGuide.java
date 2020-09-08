@@ -2,11 +2,12 @@ package tasks;
 
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.dialogues.Dialogues;
+import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
-import org.dreambot.api.randoms.RandomEvent;
+import org.dreambot.api.randoms.RandomManager;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
@@ -95,7 +96,8 @@ enum GielinorGuideState implements TaskState {
                 }
             }
             Widgets.getWidget(PickAppearanceParent).getChild(Accept).interact();
-            SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(PickAppearanceParent), 5000);
+            SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(PickAppearanceParent), 5000);
+            SleepHelper.sleepUntil(HintArrow::exists, 10000);
             return true;
         }
 
@@ -121,7 +123,6 @@ enum GielinorGuideState implements TaskState {
                 SleepHelper.randomSleep(1000, 6000);
                 Widgets.getWidget(PickAppearanceParent).getChild(Male);
             }
-
         }
 
         private boolean moveMouse(Rectangle widgetLocation) {
@@ -174,8 +175,8 @@ enum GielinorGuideState implements TaskState {
             if (!Tabs.isOpen(Tab.OPTIONS)) {
                 Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
-//                getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
-//                getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
+//                RandomSolver randomSolver = new RandomSolver(RandomEvent.ZOOM_SOLVER);
+//                randomSolver.enable();
                 // TODO add looking around the settings menu
             }
             return true;

@@ -51,8 +51,6 @@ public class HintArrowHelper {
             } else {
                 SleepHelper.sleepUntil(gameEntity::interact, 3000);
             }
-
-
         }
     }
 
