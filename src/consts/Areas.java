@@ -2,7 +2,6 @@ package consts;
 
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
-import org.dreambot.core.A;
 
 public final class Areas {
     public static final Area survivalExpertArea = new Area(
@@ -14,6 +13,8 @@ public final class Areas {
     public static final Area questGuideArea = new Area(new Tile(3087, 3124), new Tile(3087, 3120),
             new Tile(3084, 3120), new Tile(3084, 3124), new Tile(3085, 3124),
             new Tile(3086, 3125));
+    public static final Tile bottomOfLadder = new Tile(3088, 9520, 0);
+
     public static final Area miningInstructorArea = new Area(new Tile(3084, 9504), new Tile(3084, 9508), new Tile(3080, 9508), new Tile(3080, 9504));
     public static final Area MiningGateArea = new Area(new Tile(3094, 9503), new Tile(3093, 9502));
     public static final Area CombatInstructorArea = new Area(new Tile(3104, 9509), new Tile(3107, 9509),
@@ -26,7 +27,7 @@ public final class Areas {
     public static final Area PrayerArea = new Area(new Tile(3124, 3108, 0), new Tile(3122, 3104, 0));
     public static final Area WizardArea = new Area(new Tile(3142, 3090, 0), new Tile(3140, 3088));
 
-    public static final Area Lumbridge = new Area(new Tile(3233,3234,0), new Tile(3230, 3231, 0));
+    public static final Area Lumbridge = new Area(new Tile(3233, 3234, 0), new Tile(3230, 3231, 0));
 
 
 }

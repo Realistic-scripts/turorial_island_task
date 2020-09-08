@@ -4,24 +4,25 @@ import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
+import static consts.Areas.bottomOfLadder;
 import static consts.Areas.miningInstructorArea;
-import static consts.WidgetsValues.QuestWidgetChildFixed;
-import static consts.WidgetsValues.TabWidgetParentFixedScreen;
+import static consts.WidgetsValues.*;
 
 enum QuestGuideState implements TaskState {
     TALK_TO_QUEST_GUIDE {
         @Override
         public Boolean run() {
+            LogHelper.log("Running: TALK_TO_QUEST_GUIDE");
             HintArrowHelper.interact("Quest Guide");
             DialogHelper.continueDialog();
             if (!Tabs.isOpen(Tab.QUEST)) {
-                WidgetHelper widgetHelper = new WidgetHelper(new int[]{QuestWidgetChildFixed}, TabWidgetParentFixedScreen);
-                widgetHelper.child().interact();
+                Widgets.getWidget(TabWidgetParentFixedScreen).getChild(QuestWidgetChildFixed).interact();
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), 5000);
                 SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
             }
@@ -31,7 +32,8 @@ enum QuestGuideState implements TaskState {
         @Override
         public Boolean verify() {
             LogHelper.log("Verifying TALK_TO_QUEST_GUIDE");
-            return HintArrowHelper.getName("Quest Guide").contains("Quest Guide");
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return HintArrowHelper.getName("Quest Guide").contains("Quest Guide") | widget.widgetContainsText("Quest journal");
         }
 
         @Override
@@ -52,6 +54,7 @@ enum QuestGuideState implements TaskState {
         public Boolean run() {
             LogHelper.log("Climbing down ladder");
             HintArrowHelper.interact("Ladder", "climb-down");
+            SleepHelper.sleepUntil(() ->  bottomOfLadder.equals(Me.playerObjet().getTile()), 10000, 1000);
             return true;
         }
 
@@ -81,7 +84,6 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
-            Tile bottomOfLadder = new Tile(3088, 9520, 0);
             return bottomOfLadder.equals(Me.playerObjet().getTile());
         }
 

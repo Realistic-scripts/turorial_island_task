@@ -26,7 +26,8 @@ public final class WidgetsValues {
     public static final int TabWidgetParentFixedScreen = 548;
     public static final int SettingsWidgetParentFullScreen = 164;
     public static final int SettingsWidgetChildFullScreen = 47;
-    public static final int SettingsWidgetChildFixed = 47;
+    public static final int SettingsWidgetChildFixed = 45;
+    public static final int SkillWidgetChildFixed = 59;
     public static final int QuestWidgetChildFixed = 53;
     public static final int CombatWidgetChildFixed = 58;
     public static final int AccountManagementChildFixed = 42;

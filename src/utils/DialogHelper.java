@@ -58,6 +58,7 @@ public class DialogHelper {
     public void branchingDialog() {
         int optionsSelected = 0;
         int tries = 0;
+        SleepHelper.sleepUntil(Dialogues::canContinue, 10000);
         while (Dialogues.inDialogue() & tries < 20) {
             if (Dialogues.canContinue()) {
                 continueDialog();

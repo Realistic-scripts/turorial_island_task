@@ -2,10 +2,12 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
+import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.script.TaskNode;
+import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
@@ -15,6 +17,7 @@ import utils.SleepHelper;
 import utils.WalkingHelper;
 
 import static consts.Areas.questGuideArea;
+import static consts.GameObjects.Range;
 import static consts.Items.Bread;
 import static consts.Items.BreadDough;
 
@@ -75,9 +78,13 @@ enum MasterChefState implements TaskState {
         @Override
         public Boolean run() {
             // TODO turn camera to make it seem more realistic
-            Item breadDough = Inventory.get(2307);
+            Item breadDough = Inventory.get(BreadDough);
             breadDough.interact();
-            GameObjects.closest(9736).interact();
+            GameObject range = GameObjects.closest(Range);
+            Camera.keyboardRotateToEntity(range);
+            Camera.rotateToPitch(383);
+            GameObjects.closest(Range).interact();
+            SleepHelper.sleepUntil(() -> Inventory.contains(Bread), 8000);
             return true;
         }
 

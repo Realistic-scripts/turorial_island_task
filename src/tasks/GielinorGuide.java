@@ -6,6 +6,7 @@ import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
+import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
@@ -26,7 +27,7 @@ enum GielinorGuideState implements TaskState {
             // TODO test this more.
             LogHelper.log("Running: PICK_NAME");
             if (Dialogues.canEnterInput()) {
-                String name = "a";  //RandomUsernameGenerator.generate();
+                String name = RandomUsernameGenerator.generate();
                 Keyboard.type(name, true);
                 SleepHelper.sleepUntil(() -> !Dialogues.canEnterInput(), 10000);
                 SleepHelper.sleepUntil(() ->
@@ -144,11 +145,6 @@ enum GielinorGuideState implements TaskState {
             HintArrowHelper.interact("Gielinor Guide");
             DialogHelper dialogHelper = new DialogHelper(GielinorGuidePastPlayer);
             dialogHelper.branchingDialog();
-            if (!Tabs.isOpen(Tab.OPTIONS)) {
-                Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
-                SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
-                // TODO add looking around the settings menu
-            }
             return true;
         }
 
@@ -164,10 +160,41 @@ enum GielinorGuideState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (HintArrowHelper.getName("Gielinor Guide").contains("Gielinor Guide")) {
-                return TALK_TO_GIELINOR_GUIDE;
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+
+            if (widget.widgetContainsText("Options menu")) {
+                return OPEN_SETTINGS_TAB;
             }
             return WALK_TO_SURVIVAL_GUIDE;
+        }
+    },
+    OPEN_SETTINGS_TAB {
+        @Override
+        public Boolean run() {
+            if (!Tabs.isOpen(Tab.OPTIONS)) {
+                Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
+                SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
+//                getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
+//                getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
+                // TODO add looking around the settings menu
+            }
+            return true;
+        }
+
+        @Override
+        public Boolean verify() {
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("Options menu");
+        }
+
+        @Override
+        public TaskState previousState() {
+            return null;
+        }
+
+        @Override
+        public TaskState nextState() {
+            return TALK_TO_GIELINOR_GUIDE;
         }
     },
     WALK_TO_SURVIVAL_GUIDE {

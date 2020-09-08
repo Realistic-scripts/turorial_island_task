@@ -1,6 +1,7 @@
 package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
@@ -80,6 +81,7 @@ enum MiningInstructorState implements TaskState {
             LogHelper.log("Running smelt Furnace");
             GameObjects.closest(Furnace).interact();
             SleepHelper.sleepUntil(() -> !Inventory.containsAll(Copper, Tin), 8000);
+            SleepHelper.sleepUntil(HintArrow::exists, 10000, 1000);
             return null;
         }
 
@@ -111,7 +113,7 @@ enum MiningInstructorState implements TaskState {
                 interfaceHelper.interactWith("Dagger");
                 SleepHelper.sleep(2000);
             }
-
+            SleepHelper.sleepUntil(() -> Inventory.contains(BronzeDagger), 10000, 500);
             return true;
         }
 

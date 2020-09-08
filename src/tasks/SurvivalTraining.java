@@ -2,22 +2,21 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.hint.HintArrow;
-import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
 import utils.*;
 
+import static consts.Areas.chefArea;
 import static consts.Items.*;
 import static consts.WidgetsValues.*;
-import static consts.Areas.*;
 
 // TODO add storing state in file
 enum SurvivalTrainingState implements TaskState {
@@ -41,7 +40,9 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (Inventory.contains(Hatchet)) {
+            if (Inventory.contains(CookedShrimp)){
+                return WALK_TO_CHEF;
+            } else if (Inventory.contains(Hatchet)) {
                 return CHOP_TREE;
             }
             return FISHING_NET;
@@ -75,13 +76,12 @@ enum SurvivalTrainingState implements TaskState {
         }
     },
     FISH_SHRIMP {
-        int iteration = 0;
 
         @Override
         public Boolean run() {
             HintArrowHelper.interact("running Fishing Spot");
             SleepHelper.sleepUntil(() -> Inventory.contains(RawShrimp), 10000);
-            iteration++;
+            DialogHelper.continueDialog();
             return true;
         }
 
@@ -99,7 +99,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public SurvivalTrainingState nextState() {
-            if (iteration > 0) {
+            if (Inventory.contains(TinderBox)) {
                 return CHOP_TREE;
             }
             return CHECK_SKILLS;
@@ -108,14 +108,15 @@ enum SurvivalTrainingState implements TaskState {
     CHECK_SKILLS {
         @Override
         public Boolean run() {
-            Tabs.openWithMouse(Tab.SKILLS);
+            Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SkillWidgetChildFixed).interact();
             SleepHelper.sleepUntil(Tab.SKILLS::isOpen, 2000);
             return true;
         }
 
         @Override
         public Boolean verify() {
-            return Inventory.contains(RawShrimp);
+            WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            return widget.widgetContainsText("gained some experience");
         }
 
         @Override
@@ -131,22 +132,15 @@ enum SurvivalTrainingState implements TaskState {
     CHOP_TREE {
         @Override
         public Boolean run() {
-            HintArrowHelper.interact("Tree");
+            GameObjects.closest("Tree");
             SleepHelper.sleepUntil(() -> Inventory.contains(Log), 15000);
-            Keyboard.type(" ", false);
+            DialogHelper.continueDialog();
             return true;
         }
 
         @Override
         public Boolean verify() {
-            if (HintArrow.exists()) {
-                if (HintArrowHelper.getName().contains("Tree")) {
-                    return true;
-                } else if (HintArrowHelper.getName().contains("Survival Expert") | Inventory.contains(2511)) {
-                    return false;
-                }
-            }
-            return true;
+            return Inventory.containsAll(RawShrimp, TinderBox);
         }
 
         @Override
@@ -162,7 +156,6 @@ enum SurvivalTrainingState implements TaskState {
     MAKE_FIRE {
         @Override
         public Boolean run() {
-//
             LogHelper.log("Making a fire");
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
@@ -174,6 +167,7 @@ enum SurvivalTrainingState implements TaskState {
             SleepHelper.sleep(2000); // HACK Find a better way. Maybe add a wrapper that checks more then one walk animation in a row?
             SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808 &
                     Me.playerObjet().getAnimation() == -1, 45000);
+            DialogHelper.continueDialog();
             LogHelper.log("done making fire");
             return true;
         }
@@ -191,6 +185,9 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState nextState() {
+            if (!Inventory.contains(RawShrimp)) {
+                return FISH_SHRIMP;
+            }
             return COOK_SHRIMP;
         }
     },
@@ -206,9 +203,10 @@ enum SurvivalTrainingState implements TaskState {
             // TODO fix this to use on fire.
             shrimp.interact();
             GameObjects.closest(26185).interact();
-            if (!SleepHelper.sleepUntil(() -> Inventory.contains(315), 7000)) {
+            if (!SleepHelper.sleepUntil(() -> Inventory.contains(CookedShrimp), 10000)) {
                 failed = true;
             }
+            DialogHelper.continueDialog();
             return true;
         }
 
@@ -232,7 +230,6 @@ enum SurvivalTrainingState implements TaskState {
         }
     },
     WALK_TO_CHEF {
-
         @Override
         public Boolean run() {
             LogHelper.log("Run walk to chef");
@@ -245,7 +242,7 @@ enum SurvivalTrainingState implements TaskState {
         public Boolean verify() {
             LogHelper.log("Verify walk to chef");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
-            return widget.widgetContainsText("Chef");
+            return widget.widgetContainsText("Chef")| widget.widgetContainsText("just cooked your first meal");
         }
 
         @Override
