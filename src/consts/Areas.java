@@ -23,6 +23,7 @@ public final class Areas {
     public static final Area RatGateAreaOutside = new Area(new Tile(3113, 9519, 0), new Tile(3111, 9518, 0));
     public static final Area RatGateAreaInside = new Area(new Tile(3110, 9519, 0), new Tile(3108, 9518, 0));
     public static final Area CombatInstructorEndLadderArea = new Area(new Tile(3112, 9525, 0), new Tile(3109, 9523, 0));
+    public static final Tile TopOfCombatBankLadder = new Tile(3111,3125,0);
     public static final Area BankArea = new Area(new Tile(3123, 3123, 0), new Tile(3120, 3121, 0));
     public static final Area PrayerArea = new Area(new Tile(3124, 3108, 0), new Tile(3122, 3104, 0));
     public static final Area WizardArea = new Area(new Tile(3142, 3090, 0), new Tile(3140, 3088));

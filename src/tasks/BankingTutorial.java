@@ -3,12 +3,12 @@ package tasks;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.filter.Filter;
+import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.TaskNode;
-import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
@@ -100,6 +100,7 @@ enum BankingTutorialState implements TaskState {
             Widgets.getWidget(PollBoothParentFixedScreen).getChild(PollBoothExitChild).getChild(PollBoothExitGrandChild).interact();
             SleepHelper.randomSleep(500, 1200);
             SleepHelper.sleepUntil(() -> !WidgetHelper.widgetExists(PollBoothParentFixedScreen), 4000);
+            SleepHelper.sleepUntil(HintArrow::exists, 10000);
             return true;
         }
 

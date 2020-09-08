@@ -236,6 +236,8 @@ enum CombatInstructorState implements TaskState {
             WalkingHelper endLadderArea = new WalkingHelper(CombatInstructorEndLadderArea);
             endLadderArea.walk();
             HintArrowHelper.interact("Ladder");
+            SleepHelper.sleepUntil(() -> Me.playerObjet().getTile() == TopOfCombatBankLadder, 10000);
+            SleepHelper.sleepUntil(HintArrow::exists, 10000);
             return true;
         }
 

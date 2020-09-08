@@ -185,6 +185,9 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState nextState() {
+            if (Inventory.contains(CookedShrimp)){
+                return WALK_TO_CHEF;
+            }
             if (!Inventory.contains(RawShrimp)) {
                 return FISH_SHRIMP;
             }
@@ -202,7 +205,7 @@ enum SurvivalTrainingState implements TaskState {
             Item shrimp = Inventory.get(2514);
             // TODO fix this to use on fire.
             shrimp.interact();
-            GameObjects.closest(26185).interact();
+            GameObjects.closest(26185).interactForceRight("Use");
             if (!SleepHelper.sleepUntil(() -> Inventory.contains(CookedShrimp), 10000)) {
                 failed = true;
             }

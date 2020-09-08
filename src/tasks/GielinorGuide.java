@@ -1,5 +1,6 @@
 package tasks;
 
+import org.dreambot.api.ClientSettings;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.hint.HintArrow;
@@ -7,7 +8,6 @@ import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.widget.Widgets;
-import org.dreambot.api.randoms.RandomManager;
 import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.widgets.Menu;
 import state.ScriptState;
@@ -39,7 +39,7 @@ enum GielinorGuideState implements TaskState {
             boolean IsAvailable = Widgets.getWidget(ChooseDisplayNameParent).getChild(ValidNameChild).getText().contains("Great");
             if (IsAvailable) {
                 Widgets.getWidget(ChooseDisplayNameParent).getChild(SetNameChild).interact();
-                SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(ChooseDisplayNameParent), 10000);
+                SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(PickAppearanceParent), 10000);
                 return true;
             }
             Widgets.getWidget(ChooseDisplayNameParent).getChild(ChooseDisplayNameChild).interact();
@@ -68,6 +68,7 @@ enum GielinorGuideState implements TaskState {
     PICK_APPEARANCE {
         @Override
         public Boolean run() {
+            LogHelper.log("RUN: PICK_APPEARANCE");
             pickGender();
             int changeRounds = ThreadLocalRandom.current().nextInt(2, 6);
             boolean firstRound = true;
@@ -103,6 +104,7 @@ enum GielinorGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
+            LogHelper.log("Verify: PICK_APPEARANCE");
             return WidgetHelper.widgetExists(PickAppearanceParent);
         }
 
@@ -173,10 +175,15 @@ enum GielinorGuideState implements TaskState {
         @Override
         public Boolean run() {
             if (!Tabs.isOpen(Tab.OPTIONS)) {
-                Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
+                if (ClientSettings.isResizableActive()) {
+                    Widgets.getWidget(TabWidgetParentFullScreen).getChild(SettingsWidgetChildFullScreen).interact();
+                } else {
+                    Widgets.getWidget(TabWidgetParentFixedScreen).getChild(SettingsWidgetChildFixed).interact();
+                }
+
                 SleepHelper.sleepUntil(() -> Tabs.isOpen(Tab.OPTIONS), 5000, 400);
-//                RandomSolver randomSolver = new RandomSolver(RandomEvent.ZOOM_SOLVER);
-//                randomSolver.enable();
+                ClientSettings.toggleResizable(false);
+                SleepHelper.sleepUntil(() -> !ClientSettings.isResizableActive(), 10000);
                 // TODO add looking around the settings menu
             }
             return true;

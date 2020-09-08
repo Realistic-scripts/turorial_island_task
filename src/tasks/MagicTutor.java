@@ -24,6 +24,7 @@ enum MagicTutorState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            DialogHelper.continueDialog();
             return HintArrowHelper.getName("Magic Instructor").contains("Magic Instructor") & !widget.widgetContainsText("To the mainland");
         }
 
@@ -117,6 +118,7 @@ enum MagicTutorState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            DialogHelper.continueDialog();
             return widget.widgetContainsText("To the mainland");
         }
 

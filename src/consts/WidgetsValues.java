@@ -24,7 +24,7 @@ public final class WidgetsValues {
 
     // Tab widgets
     public static final int TabWidgetParentFixedScreen = 548;
-    public static final int SettingsWidgetParentFullScreen = 164;
+    public static final int TabWidgetParentFullScreen = 164;
     public static final int SettingsWidgetChildFullScreen = 47;
     public static final int SettingsWidgetChildFixed = 45;
     public static final int SkillWidgetChildFixed = 59;
