@@ -1,6 +1,5 @@
 package main;
 
-import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.impl.TaskScript;
