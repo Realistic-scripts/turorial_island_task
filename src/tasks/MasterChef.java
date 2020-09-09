@@ -11,10 +11,7 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
-import utils.DialogHelper;
-import utils.HintArrowHelper;
-import utils.SleepHelper;
-import utils.WalkingHelper;
+import utils.*;
 
 import static consts.Areas.questGuideArea;
 import static consts.GameObjects.Range;
@@ -137,17 +134,11 @@ public class MasterChef extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Master Chef");
+        log("Starting: Master Chef");
         TaskState state = MasterChefState.TALK_TO_CHEF;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finishing: Master Chef");
         ScriptState.set(ScriptState.States.QUEST_GUIDE);
-        return -1;
+        return 1;
     }
 }

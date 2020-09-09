@@ -1,7 +1,6 @@
 package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
@@ -21,7 +20,6 @@ enum MiningInstructorState implements TaskState {
     TALK_TO_MINING_GUIDE {
         @Override
         public Boolean run() {
-            LogHelper.log("Talk to mining guide");
             HintArrowHelper.interact("Mining Instructor");
             DialogHelper.continueDialog();
             Tabs.open(Tab.INVENTORY);
@@ -52,7 +50,6 @@ enum MiningInstructorState implements TaskState {
     MINE_ORE {
         @Override
         public Boolean run() {
-            LogHelper.log("Run Mining ore");
             HintArrowHelper.interact("Rocks");
             SleepHelper.sleepUntil(() -> Inventory.contains(Tin), 10000);
             HintArrowHelper.interact("Rocks");
@@ -78,7 +75,6 @@ enum MiningInstructorState implements TaskState {
     SMELT_FURNACE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running smelt Furnace");
             GameObjects.closest(Furnace).interact();
             SleepHelper.sleepUntil(() -> !Inventory.containsAll(Copper, Tin), 8000);
             SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Mining Instructor").contains("Mining Instructor"), 10000, 1000);
@@ -103,7 +99,6 @@ enum MiningInstructorState implements TaskState {
     MAKE_DAGGER {
         @Override
         public Boolean run() {
-            LogHelper.log("Running Make dagger");
             InterfaceHelper interfaceHelper = new InterfaceHelper(InterfaceHelper.widgetIdList());
             GameObjects.closest(Anvil).interact();
             SleepHelper.sleepUntil(() -> WidgetHelper.widgetExists(Smithing), 12000);
@@ -170,16 +165,10 @@ public class MiningInstructor extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Mining Instructor");
+        log("Starting: Mining Instructor");
         TaskState state = MiningInstructorState.TALK_TO_MINING_GUIDE;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finished: Mining Instructor");
         ScriptState.set(ScriptState.States.COMBAT_INSTRUCTOR);
         return 1;
     }

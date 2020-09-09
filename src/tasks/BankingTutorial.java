@@ -54,7 +54,6 @@ enum BankingTutorialState implements TaskState {
     BANK_ITEMS {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: BANK_ITEMS");
             for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 5); i++) {
                 LogHelper.log("Banking item");
                 List<Item> allItems = Inventory.all(new Filter<Item>() {
@@ -72,7 +71,6 @@ enum BankingTutorialState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log(Bank.isOpen());
             return Bank.isOpen();
         }
 
@@ -200,9 +198,10 @@ public class BankingTutorial extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Bank Tutorial");
+        log("Starting: Bank Tutorial");
         TaskState state = BankingTutorialState.WALK_TO_BANK;
         TaskStateExecute.taskStateExecute(state);
+        log("Finished: Bank Tutorial");
         ScriptState.set(ScriptState.States.PRAYER_TUTORIAL);
         return 1;
     }

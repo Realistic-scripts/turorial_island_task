@@ -52,7 +52,6 @@ enum SurvivalTrainingState implements TaskState {
     FISHING_NET {
         @Override
         public Boolean run() {
-            LogHelper.log("running fishing net");
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             return true;
@@ -87,8 +86,6 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Checking fishing spot");
-            LogHelper.log(HintArrow.exists());
             return HintArrowHelper.getName().contains("Fishing spot");
         }
 
@@ -156,7 +153,6 @@ enum SurvivalTrainingState implements TaskState {
     MAKE_FIRE {
         @Override
         public Boolean run() {
-            LogHelper.log("Making a fire");
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
             Tile tile = Me.cleanTile();
@@ -168,13 +164,11 @@ enum SurvivalTrainingState implements TaskState {
             SleepHelper.sleepUntil(() -> Me.playerObjet().getWalkAnimation() == 808 &
                     Me.playerObjet().getAnimation() == -1, 45000);
             DialogHelper.continueDialog();
-            LogHelper.log("done making fire");
             return true;
         }
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Checking make fire");
             return Inventory.containsAll(Log, TinderBox) & GameObjects.closest(Fire) == null;
         }
 
@@ -185,7 +179,7 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            if (Inventory.contains(CookedShrimp)){
+            if (Inventory.contains(CookedShrimp)) {
                 return WALK_TO_CHEF;
             }
             if (!Inventory.contains(RawShrimp)) {
@@ -201,7 +195,6 @@ enum SurvivalTrainingState implements TaskState {
         public Boolean run() {
             Tabs.openWithMouse(Tab.INVENTORY);
             SleepHelper.sleepUntil(Tab.INVENTORY::isOpen, 2000);
-            LogHelper.log("Running cook shrimp");
             Item shrimp = Inventory.get(2514);
             // TODO fix this to use on fire.
             shrimp.interact();
@@ -215,7 +208,6 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Checking cook shrimp");
             return Inventory.contains(2514);
         }
 
@@ -235,7 +227,6 @@ enum SurvivalTrainingState implements TaskState {
     WALK_TO_CHEF {
         @Override
         public Boolean run() {
-            LogHelper.log("Run walk to chef");
             WalkingHelper walkingHelper = new WalkingHelper(chefArea);
             walkingHelper.walk();
             return true;
@@ -243,7 +234,6 @@ enum SurvivalTrainingState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Verify walk to chef");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             return widget.widgetContainsText("Chef") | widget.widgetContainsText("just cooked your first meal");
         }
@@ -273,14 +263,8 @@ public class SurvivalTraining extends TaskNode {
     public int execute() {
         log("Starting survival training");
         TaskState state = SurvivalTrainingState.TALK_TO_EXPERT;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finishing survival training");
         ScriptState.set(ScriptState.States.MASTER_CHEF);
         return 1;
     }

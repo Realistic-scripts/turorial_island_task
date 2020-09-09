@@ -26,7 +26,6 @@ enum GielinorGuideState implements TaskState {
         @Override
         public Boolean run() {
             // TODO test this more.
-            LogHelper.log("Running: PICK_NAME");
             if (Dialogues.canEnterInput()) {
                 String name = RandomUsernameGenerator.generate();
                 Keyboard.type(name, true);
@@ -68,7 +67,6 @@ enum GielinorGuideState implements TaskState {
     PICK_APPEARANCE {
         @Override
         public Boolean run() {
-            LogHelper.log("RUN: PICK_APPEARANCE");
             pickGender();
             int changeRounds = ThreadLocalRandom.current().nextInt(2, 6);
             boolean firstRound = true;
@@ -104,7 +102,6 @@ enum GielinorGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Verify: PICK_APPEARANCE");
             return WidgetHelper.widgetExists(PickAppearanceParent);
         }
 
@@ -208,7 +205,6 @@ enum GielinorGuideState implements TaskState {
     WALK_TO_SURVIVAL_GUIDE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: WALK_TO_SURVIVAL_GUIDE");
             WalkingHelper walkingHelper = new WalkingHelper(survivalExpertArea);
             walkingHelper.walk();
             return true;
@@ -241,18 +237,11 @@ public class GielinorGuide extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Gielinor Guide");
+        log("Starting: Gielinor Guide");
         log(ScriptState.get());
         TaskState state = GielinorGuideState.PICK_NAME;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
-        log("Finishing Gielinor Guide");
+        TaskStateExecute.taskStateExecute(state);
+        log("Finishing: Gielinor Guide");
         ScriptState.set(ScriptState.States.SURVIVAL_TRAINING);
         log(ScriptState.get());
         return 0;

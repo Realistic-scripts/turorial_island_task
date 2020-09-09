@@ -20,7 +20,6 @@ enum QuestGuideState implements TaskState {
     TALK_TO_QUEST_GUIDE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: TALK_TO_QUEST_GUIDE");
             if (HintArrow.exists()) {
                 HintArrowHelper.interact("Quest Guide");
                 DialogHelper.continueDialog();
@@ -36,7 +35,6 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Verifying: TALK_TO_QUEST_GUIDE");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             return HintArrowHelper.getName("Quest Guide").contains("Quest Guide") | widget.widgetContainsText("Quest journal");
         }
@@ -57,8 +55,7 @@ enum QuestGuideState implements TaskState {
     CLIMB_DOWN_LADDER {
         @Override
         public Boolean run() {
-            LogHelper.log("Climbing down ladder");
-            Camera.mouseRotateTo(ThreadLocalRandom.current().nextInt(623,1126), 382);
+            Camera.mouseRotateTo(ThreadLocalRandom.current().nextInt(623, 1126), 382);
             HintArrowHelper.interact("Ladder", "climb-down");
             SleepHelper.sleepUntil(() -> bottomOfLadder.equals(Me.playerObjet().getTile()), 10000, 1000);
             return true;
@@ -82,7 +79,6 @@ enum QuestGuideState implements TaskState {
     WALK_TO_MINING_INSTRUCTOR {
         @Override
         public Boolean run() {
-            LogHelper.log("Walking to mining instructor");
             WalkingHelper walkingHelper = new WalkingHelper(miningInstructorArea);
             walkingHelper.walk();
             return true;
@@ -114,16 +110,10 @@ public class QuestGuide extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Quest Guide");
+        log("Starting: Quest Guide");
         TaskState state = QuestGuideState.TALK_TO_QUEST_GUIDE;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finishing: Quest Guide");
         ScriptState.set(ScriptState.States.MINING_INSTRUCTOR);
         return 1;
     }

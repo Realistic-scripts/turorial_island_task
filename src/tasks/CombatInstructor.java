@@ -22,7 +22,6 @@ enum CombatInstructorState implements TaskState {
     TALK_TO_COMBAT_INSTRUCTOR {
         @Override
         public Boolean run() {
-            LogHelper.log("Running Talk to combat Instructor");
             HintArrowHelper.interact("Combat Instructor");
             DialogHelper.continueDialog();
             return true;
@@ -117,8 +116,6 @@ enum CombatInstructorState implements TaskState {
     KILL_RAT_MELEE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: Killing rat melee");
-
             WalkingHelper outsideRatGateWalker = new WalkingHelper(RatGateAreaOutside);
             outsideRatGateWalker.walk();
             GameObjects.closest("Gate").interact();
@@ -211,7 +208,6 @@ enum CombatInstructorState implements TaskState {
             SleepHelper.sleepUntil(() -> !Me.playerObjet().isInCombat(), 120000);
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             SleepHelper.sleepUntil(() -> widget.widgetContainsText("Moving on"), 10000);
-            LogHelper.log("Done killing rat");
             return true;
         }
 
@@ -269,19 +265,10 @@ public class CombatInstructor extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Combat Instructor");
+        log("Starting: Combat Instructor");
         TaskState state = CombatInstructorState.TALK_TO_COMBAT_INSTRUCTOR;
-        boolean done = false;
-        while (!done) {
-            log("Verifying:" + state);
-            if (state.verify()) {
-                log("Running:" + state);
-                state.run();
-                log("Finished:" + state);
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finished: Combat Instructor");
         ScriptState.set(ScriptState.States.BANKING_TUTORIAL);
         return 1;
     }

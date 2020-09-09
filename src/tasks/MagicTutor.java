@@ -146,9 +146,10 @@ public class MagicTutor extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Magic Tutorial");
+        log("Starting: Magic Tutorial");
         TaskState state = MagicTutorState.TALK_TO_MAGIC_TUTOR;
         TaskStateExecute.taskStateExecute(state);
+        log("Finished: Magic Tutorial");
         ScriptState.set(ScriptState.States.ADVENTURE_JON);
         return 1;
     }

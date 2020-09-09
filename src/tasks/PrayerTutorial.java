@@ -17,7 +17,6 @@ enum PrayerTutorialState implements TaskState {
     TALK_TO_MONK {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: TALK_TO_MONK");
             HintArrowHelper.interact("Brother Brace");
             SleepHelper.sleepUntil(Dialogues::canContinue, 3000);
             DialogHelper.continueDialog();
@@ -81,7 +80,7 @@ enum PrayerTutorialState implements TaskState {
         public TaskState nextState() {
             return null;
         }
-    };
+    }
 }
 
 public class PrayerTutorial extends TaskNode {
@@ -93,16 +92,10 @@ public class PrayerTutorial extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Prayer Tutorial");
+        log("Starting: Prayer Tutorial");
         TaskState state = PrayerTutorialState.TALK_TO_MONK;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finished: Prayer Tutorial");
         ScriptState.set(ScriptState.States.MAGIC_TUTOR);
         return 1;
     }

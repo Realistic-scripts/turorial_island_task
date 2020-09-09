@@ -13,6 +13,7 @@ public class TaskStateExecute {
                 LogHelper.log("Finished:" + state);
             }
             state = state.nextState();
+            LogHelper.log("Next state:" + state);
             done = state == null;
         }
     }

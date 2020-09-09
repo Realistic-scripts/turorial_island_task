@@ -7,9 +7,9 @@ import org.dreambot.api.script.TaskNode;
 import state.ScriptState;
 import state.TaskState;
 import utils.DialogHelper;
-import utils.LogHelper;
 import utils.Me;
 import utils.SleepHelper;
+import utils.TaskStateExecute;
 
 import static consts.Areas.Lumbridge;
 
@@ -17,7 +17,6 @@ enum AdventureJonState implements TaskState {
     TALK_TO_ADVENTURE_JON {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: TALK_TO_ADVENTURE_JON");
             SleepHelper.sleepUntil(Dialogues::canContinue, 10000);
             DialogHelper.continueDialog();
             Tabs.openWithMouse(Tab.QUEST);
@@ -51,16 +50,10 @@ public class AdventureJon extends TaskNode {
 
     @Override
     public int execute() {
-        log("Starting Adventure Jon");
+        log("Starting: Adventure Jon");
         TaskState state = AdventureJonState.TALK_TO_ADVENTURE_JON;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
+        log("Finished: Adventure Jon");
         ScriptState.set(ScriptState.States.MAGIC_TUTOR);
         return -1;
     }
