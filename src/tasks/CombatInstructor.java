@@ -145,6 +145,7 @@ enum CombatInstructorState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
+            // TODO clean up this horrible logic...
 
             return (
                     (

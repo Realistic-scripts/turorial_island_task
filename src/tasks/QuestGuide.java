@@ -46,6 +46,7 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public TaskState nextState() {
+            SleepHelper.sleepUntil(HintArrow::exists, 5000, 500);
             if (HintArrowHelper.getName("Quest Guide").contains("Quest Guide")) {
                 return TALK_TO_QUEST_GUIDE;
             }
