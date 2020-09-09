@@ -158,6 +158,8 @@ enum BankingTutorialState implements TaskState {
 
         @Override
         public TaskState nextState() {
+            SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Door").contains("Door"), 5000);
+            DialogHelper.continueDialog();
             return WALK_TO_PRAYER;
         }
     },
