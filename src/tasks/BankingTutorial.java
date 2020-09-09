@@ -90,7 +90,6 @@ enum BankingTutorialState implements TaskState {
         @Override
         public Boolean run() {
             if (!WidgetHelper.widgetExists(PollBoothParentFixedScreen)) {
-                LogHelper.log("Running: POLL_BOOTH");
                 HintArrowHelper.interact("Poll booth");
                 DialogHelper.continueDialog();
                 // TODO scroll and explore polls
@@ -116,16 +115,12 @@ enum BankingTutorialState implements TaskState {
 
         @Override
         public TaskState nextState() {
-            // TODO check what the chat box says
-            return null;
-//            return ACCOUNT_GUIDE;
+            return ACCOUNT_GUIDE;
         }
     },
     ACCOUNT_GUIDE {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: ACCOUNT_GUIDE");
-
 //            HintArrowHelper.interact("Door");
             if (HintArrowHelper.getName("Door").contains("Door")) {
                 GameObjects.closest(9721).interact();
@@ -149,8 +144,13 @@ enum BankingTutorialState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
-            return (HintArrowHelper.getName("Door").contains("Door") | HintArrowHelper.getName("Account Guide").contains("Account Guide"))
-                    & !widget.widgetContainsText("Moving on");
+            if (widget.widgetContainsText("Moving on")) {
+                return widget.widgetContainsText("Polls");
+            }
+            if (widget.widgetContainsText("open your Account Management")) {
+                return true;
+            }
+            return HintArrowHelper.getName("Door").contains("Door") | HintArrowHelper.getName("Account Guide").contains("Account Guide");
         }
 
         @Override
@@ -166,7 +166,6 @@ enum BankingTutorialState implements TaskState {
     WALK_TO_PRAYER {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: WALK_TO_PRAYER");
             WalkingHelper prayerWalking = new WalkingHelper(PrayerArea);
             prayerWalking.walk();
             return true;
@@ -175,7 +174,10 @@ enum BankingTutorialState implements TaskState {
         @Override
         public Boolean verify() {
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
-            return widget.widgetContainsText("Moving on") | widget.widgetContainsText("Prayer");
+            if (widget.widgetContainsText("Moving on")) {
+                return !widget.widgetContainsText("Polls");
+            }
+            return widget.widgetContainsText("Prayer");
         }
 
         @Override
@@ -200,15 +202,8 @@ public class BankingTutorial extends TaskNode {
     public int execute() {
         log("Starting Bank Tutorial");
         TaskState state = BankingTutorialState.WALK_TO_BANK;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
         ScriptState.set(ScriptState.States.PRAYER_TUTORIAL);
-        return -1;
+        return 1;
     }
 }

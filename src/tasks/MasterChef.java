@@ -148,6 +148,6 @@ public class MasterChef extends TaskNode {
             done = state == null;
         }
         ScriptState.set(ScriptState.States.QUEST_GUIDE);
-        return 1;
+        return -1;
     }
 }

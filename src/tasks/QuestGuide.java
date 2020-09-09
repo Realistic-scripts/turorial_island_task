@@ -36,7 +36,7 @@ enum QuestGuideState implements TaskState {
 
         @Override
         public Boolean verify() {
-            LogHelper.log("Verifying TALK_TO_QUEST_GUIDE");
+            LogHelper.log("Verifying: TALK_TO_QUEST_GUIDE");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             return HintArrowHelper.getName("Quest Guide").contains("Quest Guide") | widget.widgetContainsText("Quest journal");
         }

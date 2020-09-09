@@ -273,8 +273,11 @@ public class CombatInstructor extends TaskNode {
         TaskState state = CombatInstructorState.TALK_TO_COMBAT_INSTRUCTOR;
         boolean done = false;
         while (!done) {
+            log("Verifying:" + state);
             if (state.verify()) {
+                log("Running:" + state);
                 state.run();
+                log("Finished:" + state);
             }
             state = state.nextState();
             done = state == null;

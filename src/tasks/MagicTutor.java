@@ -73,7 +73,6 @@ enum MagicTutorState implements TaskState {
     KILL_CHICKEN {
         @Override
         public Boolean run() {
-            LogHelper.log("Running: KILL_CHICKEN");
             WidgetHelper widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
 
             while (widget.widgetContainsText("Magic casting")) {
@@ -82,6 +81,7 @@ enum MagicTutorState implements TaskState {
                 HintArrowHelper.interact("Chicken");
                 SleepHelper.randomSleep(6000, 8000);
                 DialogHelper.continueDialog();
+                widget = new WidgetHelper(new int[]{ChatDialogChild, ChatDialogGrandChild}, ChatDialogParent);
             }
             SleepHelper.sleepUntil(() -> HintArrowHelper.getName("Magic Instructor").contains("Magic Instructor"), 3000);
             return null;
@@ -148,14 +148,7 @@ public class MagicTutor extends TaskNode {
     public int execute() {
         log("Starting Magic Tutorial");
         TaskState state = MagicTutorState.TALK_TO_MAGIC_TUTOR;
-        boolean done = false;
-        while (!done) {
-            if (state.verify()) {
-                state.run();
-            }
-            state = state.nextState();
-            done = state == null;
-        }
+        TaskStateExecute.taskStateExecute(state);
         ScriptState.set(ScriptState.States.ADVENTURE_JON);
         return 1;
     }
