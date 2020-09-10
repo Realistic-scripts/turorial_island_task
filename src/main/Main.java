@@ -19,7 +19,7 @@ public class Main extends TaskScript {
 //        getRandomManager().disableSolver(RandomEvent.RESIZABLE_DISABLER);
 //        getRandomManager().disableSolver(RandomEvent.ROOF_DISABLER);
         addNodes(
-                new GielinorGuide(), new SurvivalTraining(), new MasterChef(), new QuestGuide(), new MiningInstructor(),
+                new WalkingTester(), new GielinorGuide(), new SurvivalTraining(), new MasterChef(), new QuestGuide(), new MiningInstructor(),
                 new CombatInstructor(), new BankingTutorial(), new PrayerTutorial(), new MagicTutor(), new AdventureJon()
         );
     }

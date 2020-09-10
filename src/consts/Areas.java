@@ -31,4 +31,6 @@ public final class Areas {
     public static final Area Lumbridge = new Area(new Tile(3233, 3234, 0), new Tile(3230, 3231, 0));
 
 
+    public static final Area LumbCastleBank = new Area(new Tile(3210, 3220, 2), new Tile(3208, 3218, 2));
+
 }
