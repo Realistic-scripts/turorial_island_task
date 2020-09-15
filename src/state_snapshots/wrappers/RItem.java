@@ -14,7 +14,7 @@ public abstract class RItem {
     boolean Tradeable;
     boolean Noted;
     int Price;
-    int Priority = 0;
+    Integer Priority = 0;
 
     public RItem(int ItemId, StoringItem WantedLocation, Area[] AreasToGet, boolean Tradeable, boolean Noted) {
         this.ItemId = ItemId;
@@ -34,7 +34,7 @@ public abstract class RItem {
         }
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         /*
         The Higher the priority the sooner this should be obtained.
          */
