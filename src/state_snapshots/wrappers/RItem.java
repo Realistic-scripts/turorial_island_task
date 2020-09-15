@@ -1,5 +1,6 @@
 package state_snapshots.wrappers;
 
+import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
@@ -26,12 +27,14 @@ public abstract class RItem {
     }
 
     public void obtain(int ItemQuantity, boolean getFromGe) {
+        MethodProvider.logInfo("Starting Obtain " + this.getClass().getName());
         this.ItemQuantity = ItemQuantity;
         if (getFromGe) {
             GE();
         } else {
             this.ironMan();
         }
+        MethodProvider.logInfo("Finished Obtain " + this.getClass().getName());
     }
 
     public Integer getPriority() {
@@ -53,16 +56,17 @@ public abstract class RItem {
     public abstract void ironMan();
 
     public Area closestArea() {
-        Area currentClosest = null;
-        double currentDistance = 0;
-        for (Area area : this.AreasToGet) {
-            Tile closest = area.getNearestTile(Players.localPlayer());
-            double distance = closest.distance();
-            if (distance < currentDistance) {
-                currentClosest = area;
-            }
-        }
-        return currentClosest;
+        return this.AreasToGet[0];
+//        Area currentClosest = null;
+//        double currentDistance = 0;
+//        for (Area area : this.AreasToGet) {
+//            Tile closest = area.getNearestTile(Players.localPlayer());
+//            double distance = closest.distance();
+//            if (distance < currentDistance) {
+//                currentClosest = area;
+//            }
+//        }
+//        return currentClosest;
     }
 
 

@@ -1,5 +1,6 @@
 package state_snapshots.wrappers;
 
+import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.map.Area;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class PlayerState {
         List<RItem> PSInventoryList = new ArrayList<>(PSInventory);
         PSInventoryList.sort(Comparator.comparing(RItem::getPriority));
         for (state_snapshots.wrappers.RItem item : PSInventoryList) {
+            MethodProvider.logInfo("Getting item "+ item.getClass().getName());
             item.obtain(1, false);
         }
         return false;

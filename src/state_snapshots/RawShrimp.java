@@ -3,9 +3,12 @@ package state_snapshots;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.GameObjects;
+import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.wrappers.interactive.GameObject;
+import org.dreambot.api.wrappers.interactive.NPC;
 import state_snapshots.wrappers.RItem;
 
 public class RawShrimp extends RItem {
@@ -29,7 +32,8 @@ public class RawShrimp extends RItem {
         if (!area.contains(Players.localPlayer().getTile())) {
             Walking.walk(area.getRandomTile());
         }
-        GameObjects.closest("Fishing spot").interact();
+        NPC fishingSpot = NPCs.closest("Fishing spot");
+        fishingSpot.interact();
         MethodProvider.sleepUntil(() -> Inventory.contains(2514), 10000);
     }
 }

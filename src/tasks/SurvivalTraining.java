@@ -12,6 +12,7 @@ import org.dreambot.api.script.TaskNode;
 import org.dreambot.api.wrappers.items.Item;
 import state.ScriptState;
 import state.TaskState;
+import state_snapshots.snapshots.SurvivalExpertEnd;
 import utils.*;
 
 import static consts.Areas.chefArea;
@@ -30,7 +31,8 @@ public class SurvivalTraining extends TaskNode {
     @Override
     public int execute() {
         log("Starting survival training");
-
+        SurvivalExpertEnd survivalExpertEnd = new SurvivalExpertEnd();
+        survivalExpertEnd.validate();
         log("Finishing survival training");
         ScriptState.set(ScriptState.States.MASTER_CHEF);
         return 1;
