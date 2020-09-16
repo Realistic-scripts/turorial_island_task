@@ -20,7 +20,7 @@ public class PlayerState {
         PSInventoryList.sort(Comparator.comparing(RItem::getPriority));
         for (state_snapshots.wrappers.RItem item : PSInventoryList) {
             MethodProvider.logInfo("Getting item "+ item.getClass().getName());
-            item.obtain(1, false);
+            item.obtain();
         }
         return false;
     }

@@ -8,12 +8,12 @@ import state_snapshots.wrappers.RItem;
 
 public class SmallFishingNet extends RItem {
     public SmallFishingNet(int priority) {
-        super(303, StoringItem.INVENTORY, Areas.SmallFishingNetArea, true, false);
+        super(303, StoringItem.INVENTORY, Areas.SmallFishingNetArea, true, false,1 , false);
         this.setPriority(priority);
     }
 
     public SmallFishingNet(StoringItem itemLocation, boolean Noted, int priority) {
-        super(303, itemLocation, Areas.SmallFishingNetArea, true, Noted);
+        super(303, itemLocation, Areas.SmallFishingNetArea, true, Noted, 1, false);
         this.setPriority(priority);
     }
 

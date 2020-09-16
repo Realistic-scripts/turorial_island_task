@@ -8,12 +8,12 @@ import state_snapshots.wrappers.RItem;
 
 public class Tinderbox extends RItem {
     public Tinderbox(int priority) {
-        super(590, StoringItem.INVENTORY, Areas.SmallFishingNetArea, true, false);
+        super(590, StoringItem.INVENTORY, Areas.SmallFishingNetArea, true, false, 1, false);
         this.setPriority(priority);
     }
 
     public Tinderbox(StoringItem itemLocation, boolean Noted, int priority) {
-        super(590, itemLocation, Areas.SmallFishingNetArea, true, Noted);
+        super(590, itemLocation, Areas.SmallFishingNetArea, true, Noted, 1, false);
         this.setPriority(priority);
     }
 

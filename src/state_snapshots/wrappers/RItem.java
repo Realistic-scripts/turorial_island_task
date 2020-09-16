@@ -1,9 +1,9 @@
 package state_snapshots.wrappers;
 
 import org.dreambot.api.methods.MethodProvider;
-import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.map.Area;
-import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.wrappers.items.Item;
 import state_snapshots.StoringItem;
 
 public abstract class RItem {
@@ -16,26 +16,35 @@ public abstract class RItem {
     boolean Noted;
     int Price;
     Integer Priority = 0;
+    boolean getFromGe = false;
 
-    public RItem(int ItemId, StoringItem WantedLocation, Area[] AreasToGet, boolean Tradeable, boolean Noted) {
+    public RItem(int ItemId, StoringItem WantedLocation, Area[] AreasToGet, boolean Tradeable, boolean Noted,
+                 int ItemQuantity, boolean getFromGe) {
         this.ItemId = ItemId;
         this.WantedLocation = WantedLocation;
         this.CurrentLocation = StoringItem.DNE;
         this.AreasToGet = AreasToGet;
         this.Tradeable = Tradeable;
         this.Noted = Noted;
+        this.ItemQuantity = ItemQuantity;
+        this.getFromGe = getFromGe;
     }
 
-    public void obtain(int ItemQuantity, boolean getFromGe) {
+    public void obtain() {
         MethodProvider.logInfo("Starting Obtain " + this.getClass().getName());
-        this.ItemQuantity = ItemQuantity;
-        if (getFromGe) {
+
+        if (this.owns()) {
+            MethodProvider.logInfo(this.getClass().getName() + " already owned" );
+            return;
+        }
+        if (this.getFromGe) {
             GE();
         } else {
             this.ironMan();
         }
         MethodProvider.logInfo("Finished Obtain " + this.getClass().getName());
     }
+
 
     public Integer getPriority() {
         /*
@@ -51,6 +60,15 @@ public abstract class RItem {
     private void GE() {
         this.Price = 0; // TODO set price if using GE
         // TODO buy from GE
+    }
+
+    public boolean owns() {
+        Item item = Inventory.get(this.ItemId);
+        if (item != null) {
+            return item.getAmount() == this.ItemQuantity;
+        }
+        // TODO add bank checking
+        return false;
     }
 
     public abstract void ironMan();

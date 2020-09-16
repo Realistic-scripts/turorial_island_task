@@ -35,6 +35,6 @@ public class SurvivalTraining extends TaskNode {
         survivalExpertEnd.validate();
         log("Finishing survival training");
         ScriptState.set(ScriptState.States.MASTER_CHEF);
-        return 1;
+        return -1;
     }
 }

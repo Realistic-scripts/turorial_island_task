@@ -10,13 +10,13 @@ import state_snapshots.wrappers.RItem;
 
 public class Log extends RItem {
 
-    public Log(int priority) {
-        super(2511, StoringItem.INVENTORY, Areas.TreeArea, true, false);
+    public Log(int priority, int ItemQuantity, boolean getFromGe) {
+        super(2511, StoringItem.INVENTORY, Areas.TreeArea, true, false, ItemQuantity, getFromGe);
         this.setPriority(priority);
     }
 
-    public Log(StoringItem itemLocation, boolean Noted, int priority) {
-        super(2511, itemLocation, Areas.TreeArea, true, Noted);
+    public Log( int priority, int ItemQuantity, boolean getFromGe, StoringItem itemLocation, boolean Noted) {
+        super(2511, itemLocation, Areas.TreeArea, true, Noted, ItemQuantity, getFromGe);
         this.setPriority(priority);
     }
 
