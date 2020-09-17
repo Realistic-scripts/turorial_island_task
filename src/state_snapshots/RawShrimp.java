@@ -9,6 +9,9 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.items.Item;
 import state_snapshots.wrappers.RItem;
+import utils.Me;
+
+import java.util.List;
 
 public class RawShrimp extends RItem {
     public RawShrimp(int priority, int ItemQuantity, boolean getFromGe) {
@@ -32,15 +35,32 @@ public class RawShrimp extends RItem {
             Walking.walk(area.getRandomTile());
         }
         NPC fishingSpot = NPCs.closest("Fishing spot");
-        while(!this.owns()) {
-            fishingSpot.interact();
-            Item raw_shrimp = Inventory.get(2514);
-            int count = raw_shrimp.getAmount();
-            // TODO figure out how to get amount of objects in inventory when not stacked.
-//            raw_shrimp.
-            MethodProvider.sleepUntil(() -> raw_shrimp.getAmount() < count, 10000);
-            MethodProvider.logInfo(count);
-            MethodProvider.logInfo(raw_shrimp.getAmount());
+        while (!this.owns()) {
+            if (Me.playerObjet().getAnimation() == -1) {
+                fishingSpot.interact();
+            }
+            List<Item> items = Inventory.all(invItem -> {
+                if (invItem == null) {
+                    return false;
+                }
+                return invItem.getID() == this.ItemId;
+            });
+            MethodProvider.sleepUntil(() ->
+                            Inventory.all(invItem -> {
+                                if (invItem == null) {
+                                    return false;
+                                }
+                                return invItem.getID() == this.ItemId;
+                            }).size() > items.size(),
+                    10000, 1000);
+            MethodProvider.logInfo(Inventory.all(invItem -> {
+                if (invItem == null) {
+                    return false;
+                }
+                return invItem.getID() == this.ItemId;
+            }).size());
+            MethodProvider.logInfo(items.size());
+            MethodProvider.sleep(500, 1000);
         }
     }
 }

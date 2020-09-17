@@ -1,6 +1,7 @@
 package consts;
 
 public final class Items {
+    public static final int SmallFishingNet = 303;
     public static final int RawShrimp = 2514;
     public static final int CookedShrimp = 315;
     public static final int Hatchet = 1351;

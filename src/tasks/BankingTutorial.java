@@ -2,7 +2,6 @@ package tasks;
 
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.hint.HintArrow;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.tabs.Tab;
@@ -15,6 +14,7 @@ import state.TaskState;
 import utils.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static consts.Areas.BankArea;
@@ -56,12 +56,7 @@ enum BankingTutorialState implements TaskState {
         public Boolean run() {
             for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 5); i++) {
                 LogHelper.log("Banking item");
-                List<Item> allItems = Inventory.all(new Filter<Item>() {
-                    @Override
-                    public boolean match(Item item) {
-                        return item != null;
-                    }
-                });
+                List<Item> allItems = Inventory.all(Objects::nonNull);
                 Bank.deposit(allItems.get(ThreadLocalRandom.current().nextInt(0, allItems.size())).getID());
                 SleepHelper.randomSleep(500, 2000);
             }

@@ -1,5 +1,6 @@
 package state_snapshots;
 
+import consts.Items;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.interactive.GameObjects;
@@ -8,18 +9,14 @@ import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.walking.impl.Walking;
 import state_snapshots.wrappers.RItem;
 
+import java.util.Optional;
+
 public class Log extends RItem {
 
-    public Log(int priority, int ItemQuantity, boolean getFromGe) {
-        super(2511, StoringItem.INVENTORY, Areas.TreeArea, true, false, ItemQuantity, getFromGe);
-        this.setPriority(priority);
-    }
 
-    public Log( int priority, int ItemQuantity, boolean getFromGe, StoringItem itemLocation, boolean Noted) {
-        super(2511, itemLocation, Areas.TreeArea, true, Noted, ItemQuantity, getFromGe);
-        this.setPriority(priority);
+    public Log(Optional<Integer> ItemId, Optional<Integer> ItemQuantity, Optional<Boolean> Noted, Optional<Boolean> getFromGe, Optional<Area[]> AreasToGet, Optional<Integer> priority, Optional<StoringItem> WantedLocation) {
+        super(Optional.of(Items.Log), ItemQuantity, Noted, getFromGe, AreasToGet, priority, WantedLocation);
     }
-
 
     @Override
     public void ironMan() {
