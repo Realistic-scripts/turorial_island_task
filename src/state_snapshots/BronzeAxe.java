@@ -7,15 +7,6 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import state_snapshots.wrappers.RItem;
 
 public class BronzeAxe extends RItem {
-    public BronzeAxe(int priority) {
-        super(1351, StoringItem.INVENTORY, Areas.SmallFishingNetArea, true, false, 1, false);
-        this.setPriority(priority);
-    }
-
-    public BronzeAxe(StoringItem itemLocation, boolean Noted, int priority) {
-        super(1351, itemLocation, Areas.SmallFishingNetArea, true, Noted, 1, false);
-        this.setPriority(priority);
-    }
 
     @Override
     public void ironMan() {

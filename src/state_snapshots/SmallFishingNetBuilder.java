@@ -6,11 +6,16 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.walking.impl.Walking;
 import state_snapshots.wrappers.RItem;
+import state_snapshots.wrappers.RItemBuilder;
 import utils.DialogHelper;
 
-import java.util.Optional;
+public class SmallFishingNetBuilder extends RItemBuilder<SmallFishingNet> {
 
-public class SmallFishingNet extends RItem {
+}
+class SmallFishingNet extends RItem {
+    private SmallFishingNet(){
+        super(Items.SmallFishingNet, Areas.SmallFishingNetArea);
+    }
 
     @Override
     public void ironMan() {
@@ -26,5 +31,3 @@ public class SmallFishingNet extends RItem {
         DialogHelper.continueDialog();
     }
 }
-
-

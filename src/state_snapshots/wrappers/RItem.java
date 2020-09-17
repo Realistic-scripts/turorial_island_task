@@ -10,17 +10,25 @@ import java.util.List;
 
 public class RItem {
     public int ItemId;
-    private int ItemQuantity = 1;
-    private boolean Noted = false;
-    private boolean GetFromGe = false;
-    private Area[] AreasToGet = null;
-    private int Priority = 0;
-    private StoringItem WantedLocation = StoringItem.INVENTORY;
+    public int ItemQuantity = 1;
+    public boolean Noted = false;
+    public boolean GetFromGe = false;
+    public Area[] AreasToGet = null;
+    public int Priority = 0;
+    public StoringItem WantedLocation = StoringItem.INVENTORY;
 
 
     private int Price;
     private StoringItem CurrentLocation = StoringItem.DNE;
 
+    public RItem(){
+
+    }
+    public RItem(RItem rItem, int ItemId, Area[] AreasToGet){
+        this = rItem;
+        this.ItemId = ItemId;
+        this.AreasToGet = AreasToGet;
+    }
 
     public void obtain() {
         MethodProvider.logInfo("Starting Obtain " + this.getClass().getName());
@@ -85,59 +93,5 @@ public class RItem {
 //        }
 //        return currentClosest;
     }
-
-
-    public static class Builder {
-        private int ItemId;
-        private int ItemQuantity = 1;
-        private boolean Noted = false;
-        private boolean GetFromGe = false;
-        private Area[] AreasToGet = null;
-        private int Priority = 0;
-        private StoringItem WantedLocation = StoringItem.INVENTORY;
-
-        public Builder(int ItemId) {
-            this.ItemId = ItemId;
-
-        }
-
-        public Builder amount(int ItemQuantity) {
-            this.ItemQuantity = ItemQuantity;
-            return this;
-        }
-
-        public Builder isNoted(boolean Noted) {
-            this.Noted = Noted;
-            return this;
-        }
-
-        public Builder shouldGetFromGe(boolean GetFromGe) {
-            this.GetFromGe = GetFromGe;
-            return this;
-        }
-
-        public Builder locations(Area[] AreasToGet) {
-            this.AreasToGet = AreasToGet;
-            return this;
-        }
-
-        public Builder priority(int Priority) {
-            this.Priority = Priority;
-            return this;
-        }
-
-        public RItem build() {
-            RItem rItem = new RItem();
-            rItem.ItemId = this.ItemId;
-            rItem.ItemQuantity = this.ItemQuantity;
-            rItem.Noted = this.Noted;
-            rItem.GetFromGe = this.GetFromGe;
-            rItem.Priority = this.Priority;
-            rItem.WantedLocation = this.WantedLocation;
-
-            return rItem;
-        }
-    }
-
-
 }
+

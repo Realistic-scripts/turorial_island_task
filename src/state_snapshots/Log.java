@@ -13,11 +13,6 @@ import java.util.Optional;
 
 public class Log extends RItem {
 
-
-    public Log(Optional<Integer> ItemId, Optional<Integer> ItemQuantity, Optional<Boolean> Noted, Optional<Boolean> getFromGe, Optional<Area[]> AreasToGet, Optional<Integer> priority, Optional<StoringItem> WantedLocation) {
-        super(Optional.of(Items.Log), ItemQuantity, Noted, getFromGe, AreasToGet, priority, WantedLocation);
-    }
-
     @Override
     public void ironMan() {
         Area area = this.closestArea();
